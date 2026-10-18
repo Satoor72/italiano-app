@@ -30,7 +30,8 @@
       "hero-bg.jpg",
       "icon-192.png",
       "apple-touch-icon.png",
-      "favicon-32.png"
+      "favicon-32.png",
+      "sections-bg.jpg"
     ],
     "win": {
       "icon": "icon.png",

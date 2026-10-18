@@ -51,6 +51,7 @@
 | `apple-touch-icon.png` | **180×180** | 91 KB | أيقونة آيفون (iOS Safari) |
 | `favicon-32.png` | **32×32** | 3 KB | أيقونة تبويب المتصفح |
 | `hero-bg.jpg` | **1280×853** | 249 KB | خلفية القسم العلوي (مضغوطة JPG) |
+| `sections-bg.jpg` | **800×600** | 124 KB | خلفية كروت الأقسام التعليمية |
 | `app-icon.png` | **1024×1024** | 2.9 MB | صورة README في صفحة GitHub |
 | `icon.ico` | 256/48/32/16 | 11 KB | أيقونة ملفات Windows (.exe) |
 

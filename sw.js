@@ -1,4 +1,4 @@
-const CACHE = 'ncx-italiano-v3';
+const CACHE = 'ncx-italiano-v4';
 const ASSETS = [
   './index.html',
   './style.css',
@@ -12,7 +12,8 @@ const ASSETS = [
   './icon-192.png',
   './apple-touch-icon.png',
   './favicon-32.png',
-  './hero-bg.jpg'
+  './hero-bg.jpg',
+  './sections-bg.jpg'
 ];
 
 self.addEventListener('install', e => {

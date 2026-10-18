@@ -13,6 +13,7 @@
   --orange: #ea580c;
   --header-grad: linear-gradient(135deg,#2563eb,#7c3aed);
   --hero-bg: linear-gradient(135deg,#1e3a8a,#7c3aed 60%,#db2777);
+  --card-veil: rgba(255,255,255,.84);
 }
 [data-theme="dark"] {
   --bg: #0b1120;
@@ -25,6 +26,7 @@
   --shadow: 0 4px 24px rgba(0,0,0,0.4);
   --header-grad: linear-gradient(135deg,#1d4ed8,#6d28d9);
   --hero-bg: linear-gradient(135deg,#172554,#5b21b6 60%,#9d174d);
+  --card-veil: rgba(11,17,32,.82);
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -179,7 +181,8 @@ main { max-width:1200px; margin:0 auto; padding:30px 20px 60px; }
   gap:20px;
 }
 .sec-card {
-  background:var(--card); border-radius:20px;
+  background: linear-gradient(var(--card-veil), var(--card-veil)), url("sections-bg.jpg") center/cover no-repeat;
+  border-radius:20px;
   box-shadow:var(--shadow); border:1px solid var(--border);
   padding:24px 20px; cursor:pointer;
   transition:.3s; position:relative; overflow:hidden;
