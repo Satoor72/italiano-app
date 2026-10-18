@@ -75,20 +75,17 @@ function speak(text) {
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
     u.lang = 'it-IT';
-    u.rate = 0.85;
-    u.pitch = 1.0;
+    u.rate = 0.92;
+    u.pitch = 1.02;
     u.volume = 1.0;
     try {
       const voices = window.speechSynthesis.getVoices();
-      const itVoice = voices.find(v => v.lang && v.lang.startsWith('it-IT') && v.localService) ||
-                      voices.find(v => v.lang && v.lang.startsWith('it-IT'));
+      const itVoice = voices.find(v => v.lang && v.lang.startsWith('it-IT'));
       if (itVoice) u.voice = itVoice;
     } catch (e) {}
     window.speechSynthesis.speak(u);
   }
 }
-
-// ==================== HOME VIEW ====================
 function renderSections() {
   const grid = document.getElementById('sectionsGrid');
   grid.innerHTML = '';
