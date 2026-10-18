@@ -1,0 +1,60 @@
+{
+  "name": "ncx-italiano",
+  "productName": "NCX Italiano",
+  "version": "1.0.0",
+  "description": "تعلم الإيطالية - تطبيق سطح مكتب (Ncx)",
+  "main": "main.js",
+  "author": "Ncx",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win --publish never"
+  },
+  "build": {
+    "appId": "com.ncx.italiano",
+    "productName": "NCX Italiano",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "index.html",
+      "style.css",
+      "data1.js",
+      "data2.js",
+      "app.js",
+      "icon.svg",
+      "manifest.json",
+      "sw.js"
+    ],
+    "win": {
+      "icon": "icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "تعلم الإيطالية"
+    }
+  },
+  "devDependencies": {
+    "electron": "^44.9.0",
+    "electron-builder": "^26.15.3"
+  }
+}
