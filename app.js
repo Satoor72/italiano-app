@@ -70,7 +70,7 @@ function showToast(msg) {
   t._tm = setTimeout(() => t.classList.remove('show'), 1800);
 }
 
-function speak(text){if('speechSynthesis' in window){window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='it-IT';u.rate=0.90;u.pitch=1.0;window.speechSynthesis.speak(u);}}
+function speak(text){if('speechSynthesis' in window){window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='it-IT';u.rate=0.88;u.pitch=1.0;window.speechSynthesis.speak(u);}}
 function renderSections() {
   const grid = document.getElementById('sectionsGrid');
   grid.innerHTML = '';
