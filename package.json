@@ -1,8 +1,8 @@
 {
   "name": "ncx-italiano",
-  "productName": "NCX Italiano",
+  "productName": "IT Ncx",
   "version": "1.0.0",
-  "description": "تعلم الإيطالية - تطبيق سطح مكتب (Ncx)",
+  "description": "IT Ncx - تطبيق تعلم اللغة الإيطالية",
   "main": "main.js",
   "author": "Ncx",
   "license": "MIT",
@@ -12,7 +12,7 @@
   },
   "build": {
     "appId": "com.ncx.italiano",
-    "productName": "NCX Italiano",
+    "productName": "IT Ncx",
     "directories": {
       "output": "dist"
     },
@@ -25,7 +25,8 @@
       "app.js",
       "icon.svg",
       "manifest.json",
-      "sw.js"
+      "sw.js",
+      "icon.png"
     ],
     "win": {
       "icon": "icon.ico",
@@ -50,7 +51,7 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "تعلم الإيطالية"
+      "shortcutName": "IT Ncx"
     }
   },
   "devDependencies": {

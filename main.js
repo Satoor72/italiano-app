@@ -8,7 +8,7 @@ function createWindow() {
     minWidth: 380,
     minHeight: 500,
     backgroundColor: '#0b1120',
-    title: 'تعلم الإيطالية - Ncx',
+    title: 'IT Ncx',
     icon: path.join(__dirname, 'icon.ico'),
     webPreferences: {
       contextIsolation: true,

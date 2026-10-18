@@ -1,6 +1,6 @@
 {
-  "name": "تعلم الإيطالية - Ncx",
-  "short_name": "الإيطالية",
+  "name": "IT Ncx - تعلم الإيطالية",
+  "short_name": "IT Ncx",
   "description": "تعلّم اللغة الإيطالية — أكثر من 5600 كلمة مع الترجمة والنطق",
   "lang": "ar",
   "dir": "rtl",
@@ -12,15 +12,15 @@
   "theme_color": "#2563eb",
   "icons": [
     {
-      "src": "icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icon-maskable.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
       "purpose": "maskable"
     }
   ]
