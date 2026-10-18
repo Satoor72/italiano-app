@@ -29,7 +29,7 @@
       "icon.png"
     ],
     "win": {
-      "icon": "icon.ico",
+      "icon": "icon.png",
       "target": [
         {
           "target": "nsis",
