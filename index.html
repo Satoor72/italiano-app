@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#2563eb">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="تعلم الإيطالية">
+<meta name="description" content="تعلّم اللغة الإيطالية — أكثر من 5600 كلمة مع الترجمة العربية والنطق. من إعداد Ncx">
+<title>تعلم الإيطالية - Ncx</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo" onclick="goHome()">
+      <span>🇮🇹</span>
+      <div>تعلم الإيطالية</div>
+    </div>
+    <div class="search-wrap">
+      <input type="text" id="globalSearch" placeholder="🔍 ابحث عن كلمة بالعربية أو الإيطالية..." oninput="globalSearchFn(this.value)">
+    </div>
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="الوضع الليلي/النهار">🌙</button>
+  </div>
+</header>
+
+<div class="hero">
+  <h1>Impara l'Italiano</h1>
+  <div class="by-ncx">by <span class="ncx-gold">Ncx</span></div>
+  <div class="hero-stats">
+    <div class="hero-stat"><b id="totalSections">16</b><span>قسم</span></div>
+    <div class="hero-stat"><b id="totalWords">3200</b><span>كلمة</span></div>
+    <div class="hero-stat"><b id="learnedCount">0</b><span>مُتعلّمة</span></div>
+  </div>
+</div>
+
+<!-- HOME VIEW -->
+<div class="home-view" id="homeView">
+  <div class="progress-global">
+    <div class="bar-label">
+      <span>📊 تقدّمك العام</span>
+      <span id="progressText">0%</span>
+    </div>
+    <div class="bar-bg"><div class="bar-fill" id="progressBar" style="width:0%"></div></div>
+  </div>
+
+  <main>
+    <div class="section-title">📚 الأقسام التعليمية</div>
+    <div class="sections-grid" id="sectionsGrid"></div>
+
+    <div id="searchResults" style="display:none;margin-top:40px;">
+      <div class="section-title">🔎 نتائج البحث</div>
+      <div class="words-list" id="searchList"></div>
+    </div>
+  </main>
+</div>
+
+<!-- WORDS VIEW -->
+<div class="words-view" id="wordsView">
+  <main>
+    <button class="back-btn" onclick="goHome()">◀ العودة للأقسام</button>
+    <div class="words-header" id="wordsHeader"></div>
+    <div class="words-toolbar">
+      <input type="text" id="wordSearch" placeholder="🔍 ابحث في هذا القسم..." oninput="filterWords(this.value)">
+      <div class="mode-toggle">
+        <button id="modeList" class="active" onclick="setMode('list')">📋 قائمة</button>
+        <button id="modeFlash" onclick="setMode('flash')">🃏 بطاقات</button>
+        <button id="modeGrid" onclick="setMode('grid')">🔲 شبكة</button>
+      </div>
+    </div>
+    <div id="modeContent"></div>
+  </main>
+</div>
+
+<footer>
+  <span class="ncx-badge">Ncx</span>
+  <p>صُنع بـ <span class="heart">❤️</span> لمحبّي اللغة الإيطالية</p>
+  <p>© 2026 Ncx — جميع الحقوق محفوظة</p>
+</footer>
+
+<button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<div class="toast" id="toast"></div>
+
+<script src="data1.js"></script>
+<script src="data2.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
