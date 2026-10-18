@@ -75,14 +75,8 @@ function speak(text) {
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
     u.lang = 'it-IT';
-    u.rate = 0.92;
-    u.pitch = 1.02;
-    u.volume = 1.0;
-    try {
-      const voices = window.speechSynthesis.getVoices();
-      const itVoice = voices.find(v => v.lang && v.lang.startsWith('it-IT'));
-      if (itVoice) u.voice = itVoice;
-    } catch (e) {}
+    u.rate = 0.95;
+    u.pitch = 0.98;
     window.speechSynthesis.speak(u);
   }
 }
