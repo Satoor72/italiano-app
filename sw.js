@@ -1,4 +1,4 @@
-const CACHE = 'ncx-italiano-v1';
+const CACHE = 'ncx-italiano-v2';
 const ASSETS = [
   './index.html',
   './style.css',
@@ -7,7 +7,9 @@ const ASSETS = [
   './app.js',
   './manifest.json',
   './icon.svg',
-  './icon-maskable.svg'
+  './icon-maskable.svg',
+  './icon.png',
+  './hero-bg.jpg'
 ];
 
 self.addEventListener('install', e => {

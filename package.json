@@ -26,7 +26,8 @@
       "icon.svg",
       "manifest.json",
       "sw.js",
-      "icon.png"
+      "icon.png",
+      "hero-bg.jpg"
     ],
     "win": {
       "icon": "icon.png",
