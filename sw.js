@@ -1,4 +1,4 @@
-const CACHE = 'ncx-italiano-v2';
+const CACHE = 'ncx-italiano-v3';
 const ASSETS = [
   './index.html',
   './style.css',
@@ -9,6 +9,9 @@ const ASSETS = [
   './icon.svg',
   './icon-maskable.svg',
   './icon.png',
+  './icon-192.png',
+  './apple-touch-icon.png',
+  './favicon-32.png',
   './hero-bg.jpg'
 ];
 

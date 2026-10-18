@@ -27,7 +27,10 @@
       "manifest.json",
       "sw.js",
       "icon.png",
-      "hero-bg.jpg"
+      "hero-bg.jpg",
+      "icon-192.png",
+      "apple-touch-icon.png",
+      "favicon-32.png"
     ],
     "win": {
       "icon": "icon.png",
