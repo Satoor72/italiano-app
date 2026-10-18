@@ -14,6 +14,7 @@
   --header-grad: linear-gradient(135deg,#2563eb,#7c3aed);
   --hero-bg: linear-gradient(135deg,#1e3a8a,#7c3aed 60%,#db2777);
   --card-veil: rgba(255,255,255,.84);
+  --page-veil: rgba(240,244,248,.90);
 }
 [data-theme="dark"] {
   --bg: #0b1120;
@@ -27,10 +28,17 @@
   --header-grad: linear-gradient(135deg,#1d4ed8,#6d28d9);
   --hero-bg: linear-gradient(135deg,#172554,#5b21b6 60%,#9d174d);
   --card-veil: rgba(11,17,32,.82);
+  --page-veil: rgba(11,17,32,.90);
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Cairo','Tajawal',sans-serif; background:var(--bg); color:var(--text); transition:.4s; min-height:100vh; line-height:1.75; }
+body { font-family:'Cairo','Tajawal',sans-serif; background:var(--bg); color:var(--text); transition:.4s; min-height:100vh; line-height:1.75;
+  background-image: linear-gradient(var(--page-veil), var(--page-veil)), url("sections-bg.jpg");
+  background-position: center, center;
+  background-size: cover, cover;
+  background-attachment: fixed, fixed;
+  background-repeat: no-repeat, no-repeat;
+}
 
 /* ===== احترافية الخط الإيطالي ===== */
 .wi-it, .gw-it, .sec-it, .flash-card .it-word, .hero h1, .w-info .w-it {
@@ -181,8 +189,7 @@ main { max-width:1200px; margin:0 auto; padding:30px 20px 60px; }
   gap:20px;
 }
 .sec-card {
-  background: linear-gradient(var(--card-veil), var(--card-veil)), url("sections-bg.jpg") center/cover no-repeat;
-  border-radius:20px;
+  background:var(--card); border-radius:20px;
   box-shadow:var(--shadow); border:1px solid var(--border);
   padding:24px 20px; cursor:pointer;
   transition:.3s; position:relative; overflow:hidden;
@@ -393,6 +400,7 @@ footer .heart { color:#f87171; }
 
 /* ===== تحسينات الجوال ===== */
 @media (max-width:640px) {
+  body { background-attachment: scroll, scroll; }
   .hero h1 { font-size:1.9rem; }
   .hero { padding:36px 16px 32px; }
   .hero-stats { gap:10px; }
