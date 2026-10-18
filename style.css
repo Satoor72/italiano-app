@@ -14,7 +14,7 @@
   --header-grad: linear-gradient(135deg,#2563eb,#7c3aed);
   --hero-bg: linear-gradient(135deg,#1e3a8a,#7c3aed 60%,#db2777);
   --card-veil: rgba(255,255,255,.84);
-  --page-veil: rgba(240,244,248,.90);
+  --page-veil: rgba(240,244,248,.55);
 }
 [data-theme="dark"] {
   --bg: #0b1120;
@@ -28,7 +28,7 @@
   --header-grad: linear-gradient(135deg,#1d4ed8,#6d28d9);
   --hero-bg: linear-gradient(135deg,#172554,#5b21b6 60%,#9d174d);
   --card-veil: rgba(11,17,32,.82);
-  --page-veil: rgba(11,17,32,.90);
+  --page-veil: rgba(11,17,32,.60);
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }

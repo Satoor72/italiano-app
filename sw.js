@@ -1,4 +1,4 @@
-const CACHE = 'ncx-italiano-v5';
+const CACHE = 'ncx-italiano-v6';
 const ASSETS = [
   './index.html',
   './style.css',
