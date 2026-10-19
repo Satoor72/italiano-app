@@ -1,9 +1,10 @@
-const CACHE = 'ncx-italiano-v6';
+const CACHE = 'ncx-italiano-v7';
 const ASSETS = [
   './index.html',
   './style.css',
   './data1.js',
   './data2.js',
+  './audio_index.js',
   './app.js',
   './manifest.json',
   './icon.svg',

@@ -70,7 +70,32 @@ function showToast(msg) {
   t._tm = setTimeout(() => t.classList.remove('show'), 1800);
 }
 
-function speak(text){if('speechSynthesis' in window){window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='it-IT';u.rate=0.88;u.pitch=1.0;window.speechSynthesis.speak(u);}}
+// ==================== SPEAK (neural mp3 + fallback) ====================
+let __au = null;
+function __norm(t) {
+  return (t || '').replace(/[^A-Za-z\u00C0-\u024F\s']/g, '').replace(/\s+/g, ' ').trim();
+}
+function speak(text) {
+  const idx = window.AUDIO_INDEX || {};
+  const key = idx[text] ? text : (idx[__norm(text)] ? __norm(text) : null);
+  if (key) {
+    if (__au) { try { __au.pause(); } catch (e) {} }
+    __au = new Audio('audio/' + idx[key]);
+    __au.play().catch(() => __speakFallback(text));
+    return;
+  }
+  __speakFallback(text);
+}
+function __speakFallback(text) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'it-IT';
+    u.rate = 0.88;
+    u.pitch = 1.0;
+    window.speechSynthesis.speak(u);
+  }
+}
 function renderSections() {
   const grid = document.getElementById('sectionsGrid');
   grid.innerHTML = '';

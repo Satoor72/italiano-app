@@ -23,6 +23,8 @@
       "data1.js",
       "data2.js",
       "app.js",
+      "audio_index.js",
+      "audio/**/*",
       "icon.svg",
       "manifest.json",
       "sw.js",

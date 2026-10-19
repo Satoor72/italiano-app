@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
@@ -8,8 +8,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="IT Ncx">
-<meta name="description" content="IT Ncx - تعلّم اللغة الإيطالية — أكثر من 5600 كلمة مع الترجمة العربية والنطق">
-<title>IT Ncx - تعلم الإيطالية</title>
+<meta name="description" content="IT Ncx - ØªØ¹Ù„Ù‘Ù… Ø§Ù„Ù„ØºØ© Ø§Ù„Ø¥ÙŠØ·Ø§Ù„ÙŠØ© â€” Ø£ÙƒØ«Ø± Ù…Ù† 5600 ÙƒÙ„Ù…Ø© Ù…Ø¹ Ø§Ù„ØªØ±Ø¬Ù…Ø© Ø§Ù„Ø¹Ø±Ø¨ÙŠØ© ÙˆØ§Ù„Ù†Ø·Ù‚">
+<title>IT Ncx - ØªØ¹Ù„Ù… Ø§Ù„Ø¥ÙŠØ·Ø§Ù„ÙŠØ©</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
@@ -20,13 +20,13 @@
 <header>
   <div class="header-inner">
     <div class="logo" onclick="goHome()">
-      <span>🇮🇹</span>
-      <div>تعلم الإيطالية</div>
+      <span>ðŸ‡®ðŸ‡¹</span>
+      <div>ØªØ¹Ù„Ù… Ø§Ù„Ø¥ÙŠØ·Ø§Ù„ÙŠØ©</div>
     </div>
     <div class="search-wrap">
-      <input type="text" id="globalSearch" placeholder="🔍 ابحث عن كلمة بالعربية أو الإيطالية..." oninput="globalSearchFn(this.value)">
+      <input type="text" id="globalSearch" placeholder="ðŸ” Ø§Ø¨Ø­Ø« Ø¹Ù† ÙƒÙ„Ù…Ø© Ø¨Ø§Ù„Ø¹Ø±Ø¨ÙŠØ© Ø£Ùˆ Ø§Ù„Ø¥ÙŠØ·Ø§Ù„ÙŠØ©..." oninput="globalSearchFn(this.value)">
     </div>
-    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="الوضع الليلي/النهار">🌙</button>
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="Ø§Ù„ÙˆØ¶Ø¹ Ø§Ù„Ù„ÙŠÙ„ÙŠ/Ø§Ù„Ù†Ù‡Ø§Ø±">ðŸŒ™</button>
   </div>
 </header>
 
@@ -34,9 +34,9 @@
   <h1>Impara l'Italiano</h1>
   <div class="by-ncx">by <span class="ncx-gold">Ncx</span></div>
   <div class="hero-stats">
-    <div class="hero-stat"><b id="totalSections">16</b><span>قسم</span></div>
-    <div class="hero-stat"><b id="totalWords">3200</b><span>كلمة</span></div>
-    <div class="hero-stat"><b id="learnedCount">0</b><span>مُتعلّمة</span></div>
+    <div class="hero-stat"><b id="totalSections">16</b><span>Ù‚Ø³Ù…</span></div>
+    <div class="hero-stat"><b id="totalWords">3200</b><span>ÙƒÙ„Ù…Ø©</span></div>
+    <div class="hero-stat"><b id="learnedCount">0</b><span>Ù…ÙØªØ¹Ù„Ù‘Ù…Ø©</span></div>
   </div>
 </div>
 
@@ -44,18 +44,18 @@
 <div class="home-view" id="homeView">
   <div class="progress-global">
     <div class="bar-label">
-      <span>📊 تقدّمك العام</span>
+      <span>ðŸ“Š ØªÙ‚Ø¯Ù‘Ù…Ùƒ Ø§Ù„Ø¹Ø§Ù…</span>
       <span id="progressText">0%</span>
     </div>
     <div class="bar-bg"><div class="bar-fill" id="progressBar" style="width:0%"></div></div>
   </div>
 
   <main>
-    <div class="section-title">📚 الأقسام التعليمية</div>
+    <div class="section-title">ðŸ“š Ø§Ù„Ø£Ù‚Ø³Ø§Ù… Ø§Ù„ØªØ¹Ù„ÙŠÙ…ÙŠØ©</div>
     <div class="sections-grid" id="sectionsGrid"></div>
 
     <div id="searchResults" style="display:none;margin-top:40px;">
-      <div class="section-title">🔎 نتائج البحث</div>
+      <div class="section-title">ðŸ”Ž Ù†ØªØ§Ø¦Ø¬ Ø§Ù„Ø¨Ø­Ø«</div>
       <div class="words-list" id="searchList"></div>
     </div>
   </main>
@@ -64,14 +64,14 @@
 <!-- WORDS VIEW -->
 <div class="words-view" id="wordsView">
   <main>
-    <button class="back-btn" onclick="goHome()">◀ العودة للأقسام</button>
+    <button class="back-btn" onclick="goHome()">â—€ Ø§Ù„Ø¹ÙˆØ¯Ø© Ù„Ù„Ø£Ù‚Ø³Ø§Ù…</button>
     <div class="words-header" id="wordsHeader"></div>
     <div class="words-toolbar">
-      <input type="text" id="wordSearch" placeholder="🔍 ابحث في هذا القسم..." oninput="filterWords(this.value)">
+      <input type="text" id="wordSearch" placeholder="ðŸ” Ø§Ø¨Ø­Ø« ÙÙŠ Ù‡Ø°Ø§ Ø§Ù„Ù‚Ø³Ù…..." oninput="filterWords(this.value)">
       <div class="mode-toggle">
-        <button id="modeList" class="active" onclick="setMode('list')">📋 قائمة</button>
-        <button id="modeFlash" onclick="setMode('flash')">🃏 بطاقات</button>
-        <button id="modeGrid" onclick="setMode('grid')">🔲 شبكة</button>
+        <button id="modeList" class="active" onclick="setMode('list')">ðŸ“‹ Ù‚Ø§Ø¦Ù…Ø©</button>
+        <button id="modeFlash" onclick="setMode('flash')">ðŸƒ Ø¨Ø·Ø§Ù‚Ø§Øª</button>
+        <button id="modeGrid" onclick="setMode('grid')">ðŸ”² Ø´Ø¨ÙƒØ©</button>
       </div>
     </div>
     <div id="modeContent"></div>
@@ -80,15 +80,17 @@
 
 <footer>
   <span class="ncx-badge">Ncx</span>
-  <p>صُنع بـ <span class="heart">❤️</span> لمحبّي اللغة الإيطالية</p>
-  <p>© 2026 Ncx — جميع الحقوق محفوظة</p>
+  <p>ØµÙÙ†Ø¹ Ø¨Ù€ <span class="heart">â¤ï¸</span> Ù„Ù…Ø­Ø¨Ù‘ÙŠ Ø§Ù„Ù„ØºØ© Ø§Ù„Ø¥ÙŠØ·Ø§Ù„ÙŠØ©</p>
+  <p>Â© 2026 Ncx â€” Ø¬Ù…ÙŠØ¹ Ø§Ù„Ø­Ù‚ÙˆÙ‚ Ù…Ø­ÙÙˆØ¸Ø©</p>
 </footer>
 
-<button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">â†‘</button>
 <div class="toast" id="toast"></div>
 
+<script src="audio_index.js"></script>
 <script src="data1.js"></script>
 <script src="data2.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
+
