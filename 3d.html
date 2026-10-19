@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT Ncx — Impara l'Italiano</title>
+<meta name="description" content="IT Ncx — تجربة تعلّم إيطالي سينمائية: 5600+ كلمة، صوت بشري، وبدون إنترنت.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800;900&family=Playfair+Display:ital,wght@0,600;0,800;1,600;1,800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05070c;
+  --ink:#f4f2ec;
+  --muted:rgba(244,242,236,.55);
+  --green:#22c55e;
+  --red:#ef4444;
+  --gold:#d9b36a;
+  --glass:rgba(255,255,255,.045);
+  --line:rgba(255,255,255,.09);
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--ink);
+  font-family:'Cairo','Space Grotesk',sans-serif;
+  overflow-x:hidden;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:rgba(217,179,106,.3)}
+a{color:inherit;text-decoration:none}
+img{max-width:100%}
+
+/* ===== grain + vignette ===== */
+.grain{
+  position:fixed;inset:-50%;z-index:60;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 250 250' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain 8s steps(10) infinite;
+}
+@keyframes grain{
+  0%,100%{transform:translate(0,0)}10%{transform:translate(-3%,-4%)}20%{transform:translate(4%,2%)}
+  30%{transform:translate(-2%,5%)}40%{transform:translate(3%,-2%)}50%{transform:translate(-4%,3%)}
+  60%{transform:translate(2%,4%)}70%{transform:translate(-3%,-3%)}80%{transform:translate(4%,1%)}90%{transform:translate(-1%,-4%)}
+}
+.vignette{position:fixed;inset:0;z-index:55;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 40%,transparent 40%,rgba(0,0,0,.55) 100%);}
+
+/* ===== loader ===== */
+#loader{position:fixed;inset:0;z-index:200;background:#04060a;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px;transition:opacity .8s var(--ease),visibility .8s}
+#loader.done{opacity:0;visibility:hidden}
+.loader-mark{font-family:'Playfair Display',serif;font-style:italic;font-size:2rem;letter-spacing:.06em;color:var(--gold)}
+.loader-line{width:220px;height:1px;background:rgba(255,255,255,.12);overflow:hidden}
+.loader-line i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--green),#fff,var(--red));transition:width .3s}
+.loader-pct{font-family:'Space Grotesk',sans-serif;font-size:.75rem;letter-spacing:.3em;color:var(--muted)}
+
+/* ===== cursor ===== */
+.cursor,.cursor-dot{position:fixed;top:0;left:0;z-index:150;pointer-events:none;border-radius:50%;mix-blend-mode:difference}
+.cursor{width:34px;height:34px;border:1px solid rgba(255,255,255,.5);transition:width .3s,height .3s,background .3s;transform:translate(-50%,-50%)}
+.cursor.grow{width:64px;height:64px;background:rgba(255,255,255,.08)}
+.cursor-dot{width:5px;height:5px;background:#fff;transform:translate(-50%,-50%)}
+@media (hover:none){.cursor,.cursor-dot{display:none}}
+
+/* ===== canvas ===== */
+#scene{position:fixed;inset:0;z-index:0;pointer-events:none}
+#scene canvas{display:block}
+.hero-glow{position:fixed;z-index:0;width:70vw;height:70vw;max-width:900px;max-height:900px;border-radius:50%;filter:blur(120px);opacity:.18;pointer-events:none}
+.glow-a{top:-20%;right:-15%;background:radial-gradient(circle,#22c55e,transparent 65%)}
+.glow-b{bottom:-25%;left:-20%;background:radial-gradient(circle,#ef4444,transparent 65%);opacity:.12}
+
+/* ===== nav ===== */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:18px 34px;display:flex;align-items:center;justify-content:space-between;
+  transition:background .5s,border-color .5s,padding .5s,backdrop-filter .5s;
+  border-bottom:1px solid transparent;
+}
+nav.scrolled{background:rgba(6,8,14,.62);backdrop-filter:blur(22px) saturate(150%);border-color:var(--line);padding:12px 34px}
+.brand{display:flex;align-items:center;gap:12px;font-weight:800}
+.brand .flag{width:26px;height:26px;border-radius:50%;background:linear-gradient(90deg,var(--green) 0 33%,#fff 33% 66%,var(--red) 66%);box-shadow:0 0 24px rgba(255,255,255,.18)}
+.brand b{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:800;letter-spacing:.02em}
+.brand span{font-family:'Space Grotesk',sans-serif;font-size:.62rem;letter-spacing:.28em;color:var(--muted);text-transform:uppercase}
+.nav-links{display:flex;gap:30px;font-size:.83rem;color:var(--muted)}
+.nav-links a{position:relative;transition:color .3s}
+.nav-links a::after{content:'';position:absolute;right:0;bottom:-6px;width:0;height:1px;background:var(--gold);transition:width .4s var(--ease)}
+.nav-links a:hover{color:var(--ink)}
+.nav-links a:hover::after{width:100%}
+.nav-cta{
+  border:1px solid rgba(217,179,106,.45);color:var(--gold);
+  padding:10px 20px;border-radius:100px;font-size:.8rem;font-weight:700;
+  transition:background .4s,color .4s,box-shadow .4s;
+}
+.nav-cta:hover{background:var(--gold);color:#0a0a0a;box-shadow:0 0 40px rgba(217,179,106,.35)}
+@media (max-width:860px){.nav-links{display:none}nav{padding:14px 18px}nav.scrolled{padding:10px 18px}}
+
+/* ===== shared ===== */
+.wrap{position:relative;z-index:2}
+.eyebrow{
+  font-family:'Space Grotesk',sans-serif;font-size:.7rem;letter-spacing:.42em;
+  text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:14px;
+}
+.eyebrow::before{content:'';width:44px;height:1px;background:linear-gradient(90deg,var(--gold),transparent)}
+.serif{font-family:'Playfair Display',serif}
+.italic{font-style:italic}
+.reveal{opacity:0;transform:translateY(44px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+
+/* ===== hero ===== */
+.hero{
+  position:relative;min-height:100svh;display:flex;flex-direction:column;
+  justify-content:center;padding:140px 34px 60px;max-width:1400px;margin:0 auto;
+}
+.hero h1{
+  font-family:'Playfair Display',serif;font-weight:800;
+  font-size:clamp(2.6rem,8vw,7.2rem);line-height:1.02;letter-spacing:-.02em;
+  margin:26px 0 10px;max-width:16ch;
+}
+.hero h1 .line{display:block;overflow:hidden}
+.hero h1 .line span{display:inline-block;transform:translateY(110%);transition:transform 1.2s var(--ease)}
+.hero.ready h1 .line span{transform:none}
+.hero h1 em{font-style:italic;color:transparent;-webkit-text-stroke:1px rgba(244,242,236,.65);font-weight:600}
+.hero p.lead{
+  font-size:clamp(.95rem,1.5vw,1.15rem);color:var(--muted);max-width:52ch;
+  margin:18px 0 38px;line-height:1.9;
+}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.btn{
+  position:relative;display:inline-flex;align-items:center;gap:10px;
+  padding:16px 30px;border-radius:100px;font-weight:800;font-size:.92rem;
+  transition:transform .4s var(--ease),box-shadow .4s,background .4s,color .4s;
+  overflow:hidden;
+}
+.btn-primary{background:linear-gradient(120deg,#f4f2ec,#d9b36a);color:#0a0a0a;box-shadow:0 10px 40px rgba(217,179,106,.22)}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 18px 60px rgba(217,179,106,.35)}
+.btn-ghost{border:1px solid var(--line);color:var(--ink);background:rgba(255,255,255,.02)}
+.btn-ghost:hover{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.06);transform:translateY(-3px)}
+.hero-meta{
+  margin-top:auto;padding-top:60px;display:flex;gap:40px;flex-wrap:wrap;
+  border-top:1px solid var(--line);
+}
+.hero-meta div b{display:block;font-family:'Space Grotesk',sans-serif;font-size:1.5rem;letter-spacing:-.02em}
+.hero-meta div span{font-size:.72rem;color:var(--muted);letter-spacing:.12em}
+.scroll-hint{
+  position:absolute;bottom:22px;left:50%;transform:translateX(-50%);
+  font-family:'Space Grotesk',sans-serif;font-size:.62rem;letter-spacing:.35em;
+  color:rgba(244,242,236,.4);display:flex;flex-direction:column;align-items:center;gap:10px;
+}
+.scroll-hint i{width:1px;height:46px;background:linear-gradient(var(--gold),transparent);animation:drip 2s infinite}
+@keyframes drip{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* ===== marquee ===== */
+.marquee{
+  position:relative;z-index:2;border-block:1px solid var(--line);
+  padding:22px 0;overflow:hidden;background:rgba(255,255,255,.015);
+}
+.marquee-track{display:flex;gap:60px;width:max-content;animation:scrollX 38s linear infinite}
+.marquee:hover .marquee-track{animation-play-state:paused}
+.marquee-track span{
+  font-family:'Playfair Display',serif;font-style:italic;font-size:1.5rem;
+  color:rgba(244,242,236,.35);white-space:nowrap;display:flex;align-items:center;gap:60px;
+}
+.marquee-track span::after{content:'✦';font-style:normal;font-size:.8rem;color:var(--gold);opacity:.6}
+@keyframes scrollX{to{transform:translateX(50%)}}
+
+/* ===== sections ===== */
+section{position:relative;z-index:2}
+.section{padding:140px 34px;max-width:1400px;margin:0 auto}
+.section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;margin-bottom:70px;flex-wrap:wrap}
+.section-head h2{
+  font-family:'Playfair Display',serif;font-weight:800;
+  font-size:clamp(2rem,4.6vw,4rem);line-height:1.05;letter-spacing:-.02em;max-width:18ch;
+}
+.section-head h2 em{font-style:italic;color:var(--gold)}
+.section-head p{max-width:38ch;color:var(--muted);font-size:.95rem;line-height:1.9}
+
+/* feature grid */
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.feature{
+  position:relative;padding:34px 28px;border-radius:26px;
+  background:var(--glass);border:1px solid var(--line);
+  backdrop-filter:blur(18px) saturate(140%);
+  transition:transform .5s var(--ease),border-color .5s,background .5s;
+  transform-style:preserve-3d;will-change:transform;overflow:hidden;
+}
+.feature::before{
+  content:'';position:absolute;inset:0;border-radius:26px;opacity:0;transition:opacity .5s;
+  background:radial-gradient(400px circle at var(--mx,50%) var(--my,50%),rgba(217,179,106,.13),transparent 45%);
+}
+.feature:hover{border-color:rgba(217,179,106,.35);background:rgba(255,255,255,.06)}
+.feature:hover::before{opacity:1}
+.feature .num{font-family:'Space Grotesk',sans-serif;font-size:.66rem;letter-spacing:.3em;color:var(--gold)}
+.feature h3{font-size:1.18rem;font-weight:800;margin:16px 0 10px}
+.feature p{font-size:.86rem;color:var(--muted);line-height:1.9}
+.feature .ico{font-size:1.7rem;margin-bottom:18px;display:block;filter:drop-shadow(0 0 20px rgba(217,179,106,.25))}
+@media (max-width:980px){.features{grid-template-columns:1fr 1fr}}
+@media (max-width:620px){.features{grid-template-columns:1fr}.section{padding:90px 18px}}
+
+/* horizontal sections rail */
+.rail-outer{overflow:hidden}
+.rail{display:flex;gap:22px;padding:0 34px;width:max-content;will-change:transform}
+.sec-card{
+  width:300px;flex:0 0 auto;border-radius:28px;padding:30px;
+  background:var(--glass);border:1px solid var(--line);
+  backdrop-filter:blur(16px);position:relative;overflow:hidden;
+  transition:border-color .4s,transform .4s var(--ease);
+}
+.sec-card:hover{border-color:rgba(217,179,106,.4);transform:translateY(-6px)}
+.sec-card .emoji{font-size:2.6rem;display:block;margin-bottom:20px}
+.sec-card h3{font-size:1.1rem;font-weight:800}
+.sec-card .it{font-family:'Playfair Display',serif;font-style:italic;color:var(--gold);font-size:.95rem;direction:ltr}
+.sec-card .count{margin-top:22px;font-family:'Space Grotesk',sans-serif;font-size:.7rem;letter-spacing:.2em;color:var(--muted)}
+.sec-card .idx{position:absolute;top:22px;left:24px;font-family:'Space Grotesk',sans-serif;font-size:.66rem;color:rgba(244,242,236,.28)}
+@media (max-width:860px){
+  .rail{width:auto;display:grid;grid-template-columns:1fr;padding:0 18px}
+  .sec-card{width:auto}
+}
+
+/* audio demo */
+.demo{display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:center}
+.demo-list{display:flex;flex-direction:column;gap:12px}
+.demo-item{
+  display:flex;align-items:center;gap:18px;padding:20px 24px;border-radius:20px;
+  background:var(--glass);border:1px solid var(--line);
+  transition:border-color .4s,background .4s,transform .4s var(--ease);
+  cursor:pointer;width:100%;text-align:right;font-family:inherit;color:var(--ink);
+}
+.demo-item:hover{border-color:rgba(217,179,106,.4);background:rgba(255,255,255,.06);transform:translateX(-6px)}
+.demo-item .play{
+  width:46px;height:46px;border-radius:50%;flex:0 0 auto;
+  border:1px solid rgba(217,179,106,.45);color:var(--gold);
+  display:flex;align-items:center;justify-content:center;font-size:.9rem;
+  transition:background .3s,color .3s;
+}
+.demo-item.playing .play{background:var(--gold);color:#0a0a0a}
+.demo-item .dw{flex:1}
+.demo-item .dw b{display:block;font-family:'Playfair Display',serif;font-size:1.15rem;direction:ltr;text-align:right;font-weight:700}
+.demo-item .dw span{font-size:.76rem;color:var(--muted)}
+.demo-item .eq{display:flex;align-items:flex-end;gap:3px;height:22px;opacity:0;transition:opacity .3s}
+.demo-item.playing .eq{opacity:1}
+.demo-item .eq i{width:3px;background:var(--gold);border-radius:2px;animation:eq .9s ease-in-out infinite}
+.demo-item .eq i:nth-child(1){height:40%;animation-delay:0s}
+.demo-item .eq i:nth-child(2){height:100%;animation-delay:.15s}
+.demo-item .eq i:nth-child(3){height:60%;animation-delay:.3s}
+.demo-item .eq i:nth-child(4){height:85%;animation-delay:.45s}
+@keyframes eq{0%,100%{transform:scaleY(.5)}50%{transform:scaleY(1)}}
+.demo-note{font-size:.82rem;color:var(--muted);line-height:1.9;border-right:1px solid var(--line);padding-right:26px}
+.demo-note b{color:var(--ink);font-weight:700}
+@media (max-width:860px){.demo{grid-template-columns:1fr;gap:34px}.demo-note{border-right:0;padding-right:0;border-top:1px solid var(--line);padding-top:24px}}
+
+/* CTA */
+.cta{
+  margin:0 34px 60px;border-radius:34px;padding:90px 8%;
+  background:
+    radial-gradient(700px circle at 15% 20%,rgba(34,197,94,.14),transparent 50%),
+    radial-gradient(700px circle at 85% 80%,rgba(239,68,68,.12),transparent 50%),
+    rgba(255,255,255,.03);
+  border:1px solid var(--line);backdrop-filter:blur(20px);
+  text-align:center;position:relative;overflow:hidden;
+}
+.cta h2{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,4.2rem);font-weight:800;line-height:1.08;letter-spacing:-.02em}
+.cta h2 em{font-style:italic;color:var(--gold)}
+.cta p{color:var(--muted);margin:18px auto 34px;max-width:48ch;font-size:.95rem;line-height:1.9}
+.cta .hero-actions{justify-content:center}
+.cta small{display:block;margin-top:26px;font-size:.72rem;letter-spacing:.18em;color:rgba(244,242,236,.35);font-family:'Space Grotesk',sans-serif}
+@media (max-width:620px){.cta{margin:0 14px 40px;padding:60px 22px;border-radius:26px}}
+
+/* footer */
+footer{
+  position:relative;z-index:2;border-top:1px solid var(--line);
+  padding:40px 34px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;
+  font-size:.78rem;color:var(--muted);
+}
+footer .f-brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--ink)}
+footer .f-flag{width:18px;height:18px;border-radius:50%;background:linear-gradient(90deg,var(--green) 0 33%,#fff 33% 66%,var(--red) 66%)}
+footer a:hover{color:var(--gold)}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .reveal{opacity:1;transform:none}
+  .hero h1 .line span{transform:none}
+}
+</style>
+</head>
+<body>
+
+<div id="loader">
+  <div class="loader-mark">IT Ncx</div>
+  <div class="loader-line"><i id="loadBar"></i></div>
+  <div class="loader-pct" id="loadPct">0%</div>
+</div>
+
+<div class="grain"></div>
+<div class="vignette"></div>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<div class="hero-glow glow-a"></div>
+<div class="hero-glow glow-b"></div>
+<div id="scene"></div>
+
+<nav id="nav">
+  <a class="brand" href="#top">
+    <span class="flag"></span>
+    <div><b>IT Ncx</b><br><span>Italiano Experience</span></div>
+  </a>
+  <div class="nav-links">
+    <a href="#features">المميزات</a>
+    <a href="#sections">الأقسام</a>
+    <a href="#listen">اسمع الصوت</a>
+    <a href="#download">تحميل</a>
+  </div>
+  <a class="nav-cta" href="#download">حمّل الآن</a>
+</nav>
+
+<div class="wrap" id="top">
+
+  <header class="hero">
+    <div class="eyebrow">5600+ parole · voce umana · offline</div>
+    <h1>
+      <span class="line"><span>Impara</span></span>
+      <span class="line"><span>l'italiano <em>davvero.</em></span></span>
+    </h1>
+    <p class="lead">
+      تجربة واحدة تجمع أكثر من <b style="color:var(--ink)">5600 كلمة</b> إيطالية بالترجمة العربية،
+      نطق بشري واضح لكل كلمة، وبطاقات وأقسام منظمة — بدون إنترنت.
+    </p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="https://github.com/Satoor72/italiano-app/releases/download/v1.0.0/IT.Ncx.Setup.1.0.0.exe">
+        ⬇ تحميل لويندوز
+      </a>
+      <a class="btn btn-ghost" href="index.html">افتح التطبيق ←</a>
+    </div>
+    <div class="hero-meta">
+      <div><b data-count="5637">0</b><span>كلمة إيطالية</span></div>
+      <div><b data-count="16">0</b><span>قسماً منظماً</span></div>
+      <div><b data-count="4039">0</b><span>ملف صوتي</span></div>
+      <div><b data-count="100" data-suffix="%">0</b><span>مجاني وبدون إنترنت</span></div>
+    </div>
+    <div class="scroll-hint"><span>SCROLL</span><i></i></div>
+  </header>
+
+  <div class="marquee">
+    <div class="marquee-track" id="marquee">
+      <span>Buongiorno</span><span>Grazie mille</span><span>Arrivederci</span><span>Ti voglio bene</span>
+      <span>Che bello!</span><span>Andiamo</span><span>In bocca al lupo</span><span>La dolce vita</span>
+      <span>Buongiorno</span><span>Grazie mille</span><span>Arrivederci</span><span>Ti voglio bene</span>
+      <span>Che bello!</span><span>Andiamo</span><span>In bocca al lupo</span><span>La dolce vita</span>
+    </div>
+  </div>
+
+  <section class="section" id="features">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow reveal">Perché IT Ncx</div>
+        <h2 class="reveal" style="margin-top:18px">كل ما تحتاجه <em>لتتكلّم</em> بثقة.</h2>
+      </div>
+      <p class="reveal">مصمّم للمبتدئين العرب: تعلّم بالعين والأذن، بدون تعقيد، وبدون أي اشتراك.</p>
+    </div>
+    <div class="features">
+      <article class="feature reveal"><span class="ico">🎙️</span><div class="num">01 / VOCE</div><h3>صوت بشري حقيقي</h3><p>4039 ملف نطق إيطالي طبيعي — استمع لكل كلمة بضغطة واحدة، بدل الأصوات الروبوتية.</p></article>
+      <article class="feature reveal"><span class="ico">📚</span><div class="num">02 / LESSICO</div><h3>5600+ كلمة</h3><p>من التحيات والأرقام إلى الطب والوظائف — 16 قسماً تغطي الحياة اليومية كاملة.</p></article>
+      <article class="feature reveal"><span class="ico">🔍</span><div class="num">03 / RICERCA</div><h3>بحث فوري</h3><p>ابحث بالعربية أو الإيطالية وتوصّل للكلمة في أجزاء من الثانية، داخل القسم أو في كل التطبيق.</p></article>
+      <article class="feature reveal"><span class="ico">🃏</span><div class="num">04 / FLASH</div><h3>بطاقات ذكية</h3><p>وضع البطاقات لمراجعة سريعة، ووضع الشبكة لتصفّح بصري، مع تتبّع تقدّمك تلقائياً.</p></article>
+      <article class="feature reveal"><span class="ico">🌙</span><div class="num">05 / TEMA</div><h3>ليلي ونهاري</h3><p>واجهة عربية RTL مريحة، وضع ليلي للعين، وتصميم متجاوب لكل أحجام الشاشات.</p></article>
+      <article class="feature reveal"><span class="ico">📲</span><div class="num">06 / OFFLINE</div><h3>يعمل بدون إنترنت</h3><p>ثبّته على جوالك أو الكمبيوتر واستعمله في أي مكان — كل الكلمات والأصوات لديك.</p></article>
+    </div>
+  </section>
+
+  <section class="section" id="sections" style="padding-bottom:60px">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow reveal">16 sezioni</div>
+        <h2 class="reveal" style="margin-top:18px">من <em>Buongiorno</em> إلى الاحتراف.</h2>
+      </div>
+      <p class="reveal">كل قسم منظّم كرحلة قصيرة: كلمات، أمثلة، ونطق. اسحب يميناً أو تابع التمرير.</p>
+    </div>
+  </section>
+  <div class="rail-outer">
+    <div class="rail" id="rail">
+      <article class="sec-card"><span class="idx">01</span><span class="emoji">👋</span><h3>أساسيات يومية</h3><div class="it">Fondamentali</div><div class="count">كلماتك الأولى</div></article>
+      <article class="sec-card"><span class="idx">02</span><span class="emoji">🤝</span><h3>التحيات والتعارف</h3><div class="it">Saluti e Presentazioni</div><div class="count">ابدأ حواراً</div></article>
+      <article class="sec-card"><span class="idx">03</span><span class="emoji">🔢</span><h3>الأرقام</h3><div class="it">I Numeri</div><div class="count">0 — 100</div></article>
+      <article class="sec-card"><span class="idx">04</span><span class="emoji">🎨</span><h3>الألوان</h3><div class="it">I Colori</div><div class="count">صف العالم</div></article>
+      <article class="sec-card"><span class="idx">05</span><span class="emoji">👨‍👩‍👧</span><h3>العائلة</h3><div class="it">La Famiglia</div><div class="count">أقاربك</div></article>
+      <article class="sec-card"><span class="idx">06</span><span class="emoji">🍝</span><h3>الطعام والشراب</h3><div class="it">Cibo e Bevande</div><div class="count">في المطعم</div></article>
+      <article class="sec-card"><span class="idx">07</span><span class="emoji">✈️</span><h3>السفر والمطار</h3><div class="it">Viaggi e Aeroporto</div><div class="count">رحلة بلا توتر</div></article>
+      <article class="sec-card"><span class="idx">08</span><span class="emoji">🧠</span><h3>جسم الإنسان</h3><div class="it">Il Corpo Umano</div><div class="count">الصحة</div></article>
+      <article class="sec-card"><span class="idx">09</span><span class="emoji">🎓</span><h3>المدرسة والعمل</h3><div class="it">Scuola e Lavoro</div><div class="count">يومك</div></article>
+      <article class="sec-card"><span class="idx">10</span><span class="emoji">🌤️</span><h3>الطقس والفصول</h3><div class="it">Meteo e Stagioni</div><div class="count">فصول السنة</div></article>
+      <article class="sec-card"><span class="idx">11</span><span class="emoji">👕</span><h3>الملابس</h3><div class="it">Abiti e Vestiti</div><div class="count">أناقة</div></article>
+      <article class="sec-card"><span class="idx">12</span><span class="emoji">🏠</span><h3>المنزل</h3><div class="it">La Casa</div><div class="count">بيتك</div></article>
+      <article class="sec-card"><span class="idx">13</span><span class="emoji">🦁</span><h3>الحيوانات</h3><div class="it">Gli Animali</div><div class="count">عالم الحياة</div></article>
+      <article class="sec-card"><span class="idx">14</span><span class="emoji">🌿</span><h3>الطبيعة</h3><div class="it">La Natura</div><div class="count">خارج المدينة</div></article>
+      <article class="sec-card"><span class="idx">15</span><span class="emoji">💼</span><h3>الوظائف</h3><div class="it">Le Professioni</div><div class="count">المهن</div></article>
+      <article class="sec-card"><span class="idx">16</span><span class="emoji">⚡</span><h3>الأفعال الشائعة</h3><div class="it">Verbi Comuni</div><div class="count">تحرّك وعبّر</div></article>
+    </div>
+  </div>
+
+  <section class="section" id="listen">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow reveal">Ascolta</div>
+        <h2 class="reveal" style="margin-top:18px">اسمعها <em>بصوت بشري.</em></h2>
+      </div>
+    </div>
+    <div class="demo">
+      <div class="demo-list reveal">
+        <button class="demo-item" data-audio="audio/buongiorno_b7548e.mp3">
+          <span class="play">▶</span>
+          <span class="dw"><b>Buongiorno</b><span>صباح الخير</span></span>
+          <span class="eq"><i></i><i></i><i></i><i></i></span>
+        </button>
+        <button class="demo-item" data-audio="audio/grazie_mille_43a359.mp3">
+          <span class="play">▶</span>
+          <span class="dw"><b>Grazie mille</b><span>شكراً جزيلاً</span></span>
+          <span class="eq"><i></i><i></i><i></i><i></i></span>
+        </button>
+        <button class="demo-item" data-audio="audio/arrivederci_1b6668.mp3">
+          <span class="play">▶</span>
+          <span class="dw"><b>Arrivederci</b><span>إلى اللقاء</span></span>
+          <span class="eq"><i></i><i></i><i></i><i></i></span>
+        </button>
+        <button class="demo-item" data-audio="audio/gnocchi_2762f9.mp3">
+          <span class="play">▶</span>
+          <span class="dw"><b>Gnocchi</b><span>نوع من المعكرونة</span></span>
+          <span class="eq"><i></i><i></i><i></i><i></i></span>
+        </button>
+      </div>
+      <div class="demo-note reveal">
+        <p><b>ليس صوتاً آلياً.</b> كل كلمة في IT Ncx مسجّلة بصوت إيطالي طبيعي — اضغط واستمع، كرّر خلف الصوت، وثبّت النطق الصحيح من أول مرة.</p>
+        <p style="margin-top:18px">جرّب أربع كلمات هنا، وفي التطبيق ستجد <b>4039</b> ملفاً صوتياً جاهزاً لكل الكلمات.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta reveal" id="download">
+    <div class="eyebrow" style="justify-content:center">Inizia oggi</div>
+    <h2 style="margin-top:20px">ابدأ رحلتك <em>الإيطالية</em> الآن.</h2>
+    <p>ثبّت IT Ncx على جوالك أو كمبيوترك خلال ثوانٍ. مجاني بالكامل، بدون إعلانات، وبدون إنترنت.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="https://github.com/Satoor72/italiano-app/releases/download/v1.0.0/IT.Ncx.Setup.1.0.0.exe">⬇ تحميل لويندوز</a>
+      <a class="btn btn-ghost" href="index.html">افتح على الجوال ←</a>
+    </div>
+    <small>WINDOWS • ANDROID • IPHONE · PWA</small>
+  </section>
+
+  <footer>
+    <div class="f-brand"><span class="f-flag"></span> IT Ncx</div>
+    <div>صُنع بـ <span style="color:var(--red)">♥</span> لمحبّي اللغة الإيطالية — © 2026 Ncx</div>
+    <a href="https://github.com/Satoor72/italiano-app" target="_blank" rel="noopener">GitHub ↗</a>
+  </footer>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+<script type="module">
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+/* ================= LOADER ================= */
+const loadBar = document.getElementById('loadBar');
+const loadPct = document.getElementById('loadPct');
+let p = 0;
+const tick = setInterval(() => {
+  p = Math.min(92, p + Math.random() * 9);
+  loadBar.style.width = p + '%';
+  loadPct.textContent = Math.round(p) + '%';
+}, 120);
+
+window.addEventListener('load', () => {
+  clearInterval(tick);
+  loadBar.style.width = '100%';
+  loadPct.textContent = '100%';
+  setTimeout(() => {
+    document.getElementById('loader').classList.add('done');
+    document.querySelector('.hero').classList.add('ready');
+  }, 350);
+  setTimeout(() => document.querySelector('.hero').classList.add('ready'), 1800);
+});
+
+/* ================= THREE SCENE ================= */
+const host = document.getElementById('scene');
+const isMobile = window.matchMedia('(max-width: 860px)').matches;
+let renderer, scene, camera, composer, group, wire, points, clock;
+const mouse = { x: 0, y: 0 };
+let scrollProg = 0;
+
+function initThree() {
+  try {
+    renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !isMobile, powerPreference: 'high-performance' });
+  } catch (e) { return; }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.15;
+  host.appendChild(renderer.domElement);
+
+  scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x05070c, 0.06);
+
+  camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 100);
+  camera.position.set(0, 0, 6.2);
+
+  scene.add(new THREE.AmbientLight(0xffffff, 0.35));
+  const l1 = new THREE.PointLight(0x22c55e, 80, 30); l1.position.set(-6, 4, 5); scene.add(l1);
+  const l2 = new THREE.PointLight(0xef4444, 70, 30); l2.position.set(6, -3, 4); scene.add(l2);
+  const l3 = new THREE.DirectionalLight(0xfff4dc, 2.2); l3.position.set(0, 8, 6); scene.add(l3);
+
+  group = new THREE.Group();
+  group.position.set(isMobile ? 0 : 2.6, isMobile ? 0.9 : 0.15, 0);
+  scene.add(group);
+
+  // tricolor gradient torus knot
+  const geo = new THREE.TorusKnotGeometry(1.28, 0.34, isMobile ? 140 : 260, 28, 2, 3);
+  const mat = new THREE.MeshStandardMaterial({
+    color: 0x101724, metalness: 0.95, roughness: 0.18,
+    emissive: 0x1a2233, emissiveIntensity: 0.5
+  });
+  const knot = new THREE.Mesh(geo, mat);
+
+  // tricolor rim via shader overlay
+  const rimMat = new THREE.ShaderMaterial({
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    uniforms: { uTime: { value: 0 } },
+    vertexShader: `varying vec3 vN; varying vec3 vP;
+      void main(){ vN = normalize(normalMatrix * normal); vP = position;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
+    fragmentShader: `uniform float uTime; varying vec3 vN; varying vec3 vP;
+      void main(){
+        float y = normalize(vP).y * 0.5 + 0.5;
+        vec3 green = vec3(0.133,0.773,0.369);
+        vec3 white = vec3(0.98,0.97,0.94);
+        vec3 red   = vec3(0.937,0.267,0.267);
+        vec3 col = y < 0.5 ? mix(green, white, smoothstep(0.0,0.5,y))
+                           : mix(white, red, smoothstep(0.5,1.0,y));
+        float fres = pow(1.0 - abs(dot(vN, vec3(0.0,0.0,1.0))), 2.4);
+        float pulse = 0.75 + 0.25 * sin(uTime * 1.2 + vP.y * 2.0);
+        gl_FragColor = vec4(col, fres * 0.85 * pulse);
+      }`
+  });
+  const rim = new THREE.Mesh(geo, rimMat);
+  rim.scale.setScalar(1.012);
+  group.add(knot, rim);
+
+  // gold wireframe icosahedron
+  wire = new THREE.LineSegments(
+    new THREE.WireframeGeometry(new THREE.IcosahedronGeometry(2.35, 1)),
+    new THREE.LineBasicMaterial({ color: 0xd9b36a, transparent: true, opacity: 0.16 })
+  );
+  group.add(wire);
+
+  // particle field
+  const N = isMobile ? 700 : 1600;
+  const pos = new Float32Array(N * 3);
+  for (let i = 0; i < N; i++) {
+    const r = 5 + Math.random() * 16;
+    const t = Math.random() * Math.PI * 2;
+    const ph = Math.acos(2 * Math.random() - 1);
+    pos[i*3]   = r * Math.sin(ph) * Math.cos(t);
+    pos[i*3+1] = r * Math.cos(ph) * 0.6;
+    pos[i*3+2] = r * Math.sin(ph) * Math.sin(t) - 4;
+  }
+  const pg = new THREE.BufferGeometry();
+  pg.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  points = new THREE.Points(pg, new THREE.PointsMaterial({
+    color: 0xf4f2ec, size: 0.035, transparent: true, opacity: 0.5,
+    sizeAttenuation: true, depthWrite: false
+  }));
+  scene.add(points);
+
+  // post
+  composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene, camera));
+  const bloom = new UnrealBloomPass(
+    new THREE.Vector2(window.innerWidth, window.innerHeight),
+    isMobile ? 0.55 : 0.85, 0.7, 0.62
+  );
+  composer.addPass(bloom);
+
+  clock = new THREE.Clock();
+  animate();
+
+  window.addEventListener('resize', onResize);
+  window.addEventListener('mousemove', e => {
+    mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -((e.clientY / window.innerHeight) * 2 - 1);
+  }, { passive: true });
+
+  if (window.ScrollTrigger) {
+    ScrollTrigger.create({
+      trigger: '#top', start: 'top top', end: 'bottom top', scrub: 1,
+      onUpdate: self => { scrollProg = self.progress; }
+    });
+  }
+}
+
+function onResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  composer.setSize(window.innerWidth, window.innerHeight);
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+
+  group.rotation.y = t * 0.16 + scrollProg * 2.2 + mouse.x * 0.5;
+  group.rotation.x = Math.sin(t * 0.35) * 0.12 + mouse.y * 0.25;
+  wire.rotation.y = -t * 0.1;
+  wire.rotation.z = t * 0.06;
+  points.rotation.y = t * 0.012;
+
+  const s = 1 + Math.sin(t * 0.9) * 0.015;
+  group.scale.setScalar(s);
+  if (group.children[1] && group.children[1].material.uniforms) {
+    group.children[1].material.uniforms.uTime.value = t;
+  }
+
+  camera.position.z = 6.2 - Math.sin(t * 0.2) * 0.12;
+  composer.render();
+}
+
+if (document.getElementById('scene')) initThree();
+
+/* ================= REVEAL ================= */
+const io = new IntersectionObserver(entries => {
+  entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+}, { threshold: 0.14 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+/* ================= COUNTERS ================= */
+const counters = document.querySelectorAll('[data-count]');
+const cio = new IntersectionObserver(entries => {
+  entries.forEach(en => {
+    if (!en.isIntersecting) return;
+    const el = en.target;
+    const end = +el.dataset.count;
+    const suf = el.dataset.suffix || '';
+    const t0 = performance.now(), dur = 1800;
+    const step = now => {
+      const k = Math.min(1, (now - t0) / dur);
+      const e = 1 - Math.pow(1 - k, 3);
+      el.textContent = Math.round(end * e).toLocaleString('en-US') + suf;
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+    cio.unobserve(el);
+  });
+}, { threshold: 0.5 });
+counters.forEach(c => cio.observe(c));
+
+/* ================= NAV ================= */
+const nav = document.getElementById('nav');
+const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 40);
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+/* ================= CURSOR ================= */
+const cur = document.getElementById('cursor');
+const dot = document.getElementById('cursorDot');
+let cx = 0, cy = 0, tx = 0, ty = 0;
+window.addEventListener('mousemove', e => {
+  tx = e.clientX; ty = e.clientY;
+  dot.style.transform = `translate(${tx}px,${ty}px) translate(-50%,-50%)`;
+});
+(function loop() {
+  cx += (tx - cx) * 0.16; cy += (ty - cy) * 0.16;
+  cur.style.transform = `translate(${cx}px,${cy}px) translate(-50%,-50%)`;
+  requestAnimationFrame(loop);
+})();
+document.querySelectorAll('a,button,.feature,.sec-card,.demo-item').forEach(el => {
+  el.addEventListener('mouseenter', () => cur.classList.add('grow'));
+  el.addEventListener('mouseleave', () => cur.classList.remove('grow'));
+});
+
+/* ================= TILT ================= */
+document.querySelectorAll('.feature').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width;
+    const py = (e.clientY - r.top) / r.height;
+    card.style.setProperty('--mx', px * 100 + '%');
+    card.style.setProperty('--my', py * 100 + '%');
+    card.style.transform = `perspective(900px) rotateX(${(0.5 - py) * 8}deg) rotateY(${(px - 0.5) * 10}deg) translateY(-4px)`;
+  });
+  card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+});
+
+/* ================= HORIZONTAL RAIL ================= */
+if (window.gsap && window.ScrollTrigger && window.matchMedia('(min-width: 861px)').matches) {
+  gsap.registerPlugin(ScrollTrigger);
+  const rail = document.getElementById('rail');
+  const dist = () => rail.scrollWidth - window.innerWidth + 68;
+  gsap.to(rail, {
+    x: () => -dist(),
+    ease: 'none',
+    scrollTrigger: {
+      trigger: '#sections',
+      start: 'bottom bottom+=120',
+      end: () => '+=' + dist(),
+      scrub: 1,
+      invalidateOnRefresh: true
+    }
+  });
+}
+
+/* ================= AUDIO DEMO ================= */
+let currentAudio = null, currentBtn = null;
+document.querySelectorAll('.demo-item').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const src = btn.dataset.audio;
+    if (currentBtn === btn && currentAudio && !currentAudio.paused) {
+      currentAudio.pause(); btn.classList.remove('playing'); currentBtn = null; return;
+    }
+    if (currentAudio) { currentAudio.pause(); if (currentBtn) currentBtn.classList.remove('playing'); }
+    currentAudio = new Audio(src);
+    currentBtn = btn;
+    btn.classList.add('playing');
+    currentAudio.play().catch(() => {
+      btn.classList.remove('playing');
+      const u = new SpeechSynthesisUtterance(btn.querySelector('b').textContent);
+      u.lang = 'it-IT'; speechSynthesis.speak(u);
+    });
+    currentAudio.onended = () => { btn.classList.remove('playing'); };
+  });
+});
+</script>
+</body>
+</html>
