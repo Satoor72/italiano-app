@@ -1,4 +1,5 @@
-const CACHE = 'ncx-italiano-v7';
+const CACHE = 'ncx-italiano-v8';
+const CORE = ['./index.html', './style.css', './data1.js', './data2.js', './audio_index.js', './app.js'];
 const ASSETS = [
   './index.html',
   './style.css',
@@ -32,13 +33,27 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
+  const req = e.request;
+  if (req.method !== 'GET') return;
+  const url = new URL(req.url);
+  const isCode = /\.(html|js|json)$/.test(url.pathname) || url.pathname.endsWith('/');
+  if (isCode) {
+    e.respondWith(
+      fetch(req).then(resp => {
+        const clone = resp.clone();
+        caches.open(CACHE).then(c => c.put(req, clone));
+        return resp;
+      }).catch(() => caches.match(req).then(c => c || caches.match('./index.html')))
+    );
+    return;
+  }
   e.respondWith(
-    caches.match(e.request).then(cached =>
+    caches.match(req).then(cached =>
       cached ||
-      fetch(e.request).then(resp => {
-        if (e.request.method === 'GET' && resp.ok) {
+      fetch(req).then(resp => {
+        if (resp.ok) {
           const clone = resp.clone();
-          caches.open(CACHE).then(c => c.put(e.request, clone));
+          caches.open(CACHE).then(c => c.put(req, clone));
         }
         return resp;
       }).catch(() => caches.match('./index.html'))
