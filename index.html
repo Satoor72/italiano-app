@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
-<link rel="stylesheet" href="style.css?v=10">
+<link rel="stylesheet" href="style.css?v=11">
 </head>
 <body>
 
@@ -87,10 +87,32 @@
 <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 <div class="toast" id="toast"></div>
 
-<script src="audio_index.js?v=10"></script>
-<script src="data1.js?v=10"></script>
-<script src="data2.js?v=10"></script>
-<script src="app.js?v=10"></script>
+<div class="install-bar" id="installBar">
+  <span class="ib-icon">📲</span>
+  <div class="ib-text">
+    <b>ثبّت IT Ncx على جهازك</b>
+    <span>يفتح كتطبيق كامل وبدون إنترنت</span>
+  </div>
+  <button class="ib-btn" onclick="installApp()">تثبيت</button>
+  <button class="ib-close" onclick="dismissInstall()" aria-label="إغلاق">✕</button>
+</div>
+
+<div class="install-modal" id="installModal" onclick="if(event.target===this)closeInstallModal()">
+  <div class="im-box">
+    <h3>📲 تثبيت على الآيفون</h3>
+    <ol>
+      <li>اضغط زر <b>المشاركة</b> (مربع مع سهم) في Safari</li>
+      <li>اختر <b>إضافة إلى الشاشة الرئيسية</b></li>
+      <li>اضغط <b>إضافة</b></li>
+    </ol>
+    <button onclick="closeInstallModal()">فهمت</button>
+  </div>
+</div>
+
+<script src="audio_index.js?v=11"></script>
+<script src="data1.js?v=11"></script>
+<script src="data2.js?v=11"></script>
+<script src="app.js?v=11"></script>
 </body>
 </html>
 

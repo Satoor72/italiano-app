@@ -350,3 +350,55 @@ if ('serviceWorker' in navigator) {
     }).catch(() => {});
   });
 }
+
+// ==================== INSTALL (mobile app) ====================
+let __installEvt = null;
+function isStandalone() {
+  return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+}
+function isMobile() {
+  return /Android|iPhone|iPad|iPod|Mobile|Opera Mini/i.test(navigator.userAgent);
+}
+function showInstallBar() {
+  if (!isMobile() || isStandalone()) return;
+  if (localStorage.getItem('ncx_install_dismissed') === '1') return;
+  const bar = document.getElementById('installBar');
+  if (!bar) return;
+  bar.classList.add('show');
+  document.body.classList.add('install-show');
+}
+function hideInstallBar() {
+  const bar = document.getElementById('installBar');
+  if (bar) bar.classList.remove('show');
+  document.body.classList.remove('install-show');
+}
+function dismissInstall() {
+  localStorage.setItem('ncx_install_dismissed', '1');
+  hideInstallBar();
+}
+function installApp() {
+  if (__installEvt) {
+    __installEvt.prompt();
+    __installEvt.userChoice.then(() => { __installEvt = null; hideInstallBar(); }).catch(() => {});
+    return;
+  }
+  if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+    document.getElementById('installModal').classList.add('show');
+    return;
+  }
+  showToast('افتح قائمة المتصفح ⋮ واختر «تثبيت التطبيق»');
+}
+function closeInstallModal() {
+  const m = document.getElementById('installModal');
+  if (m) m.classList.remove('show');
+}
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  __installEvt = e;
+  showInstallBar();
+});
+window.addEventListener('appinstalled', () => {
+  localStorage.setItem('ncx_install_dismissed', '1');
+  hideInstallBar();
+});
+showInstallBar();
