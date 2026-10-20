@@ -121,6 +121,7 @@ function renderSections() {
 
 function goHome() {
   document.getElementById('wordsView').classList.remove('active');
+  document.getElementById('quizView').classList.remove('active');
   document.getElementById('homeView').classList.remove('hidden');
   currentSection = null;
   renderSections();
@@ -135,6 +136,7 @@ function openSection(id) {
   flashIndex = 0;
   flashRevealed = false;
   document.getElementById('homeView').classList.add('hidden');
+  document.getElementById('quizView').classList.remove('active');
   document.getElementById('wordsView').classList.add('active');
   document.getElementById('wordSearch').value = '';
 
@@ -144,6 +146,7 @@ function openSection(id) {
       <h2>${currentSection.title}</h2>
       <div class="w-it">${currentSection.italian} — ${currentSection.words.length} كلمة</div>
     </div>
+    <button class="quiz-here" onclick="startQuizFromWords()">🧪 اختبرني في هذا القسم</button>
   `;
 
   filteredWords = currentSection.words.map((w, i) => ({ it: w[0], ar: w[1], dg: w[2], idx: i }));
@@ -328,6 +331,157 @@ function globalSearchFn(q) {
     </div>
   `).join('');
   document.querySelector('#searchResults').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ==================== QUIZ ====================
+let quizSec = null;
+let quizQs = [];
+let quizI = 0;
+let quizScore = 0;
+let quizAnswered = false;
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+  }
+  return arr;
+}
+
+function quizShell(showPick, showArea) {
+  document.getElementById('homeView').classList.add('hidden');
+  document.getElementById('wordsView').classList.remove('active');
+  document.getElementById('quizView').classList.add('active');
+  document.getElementById('quizPick').style.display = showPick ? 'block' : 'none';
+  document.getElementById('quizArea').style.display = showArea ? 'block' : 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function openQuiz() {
+  quizShell(true, false);
+  document.getElementById('quizArea').innerHTML = '';
+  document.getElementById('quizPick').innerHTML =
+    '<div class="section-title">🧪 اختر قسم الاختبار</div>' +
+    '<div class="sections-grid">' + ALL_DATA.map(sec => `
+      <div class="sec-card" onclick="startQuiz(${sec.id})">
+        <span class="sec-emoji">${sec.emoji}</span>
+        <h3>${sec.title}</h3>
+        <div class="sec-it">${sec.italian}</div>
+        <div class="sec-count">${sec.words.length} كلمة</div>
+      </div>`).join('') + '</div>';
+}
+
+function startQuizFromWords() {
+  if (currentSection) startQuiz(currentSection.id);
+}
+
+function startQuiz(secId) {
+  const sec = ALL_DATA.find(s => s.id === secId);
+  if (!sec) return;
+  quizSec = sec;
+
+  const pool = sec.words
+    .map((w, i) => ({ it: w[0], ar: w[1], dg: w[2], idx: i }))
+    .filter(w => w.it && w.ar && w.it.trim() && w.ar.trim() && w.it.trim() !== w.ar.trim());
+
+  const n = Math.min(10, pool.length);
+  quizQs = shuffle(pool.slice()).slice(0, n).map(w => {
+    const dir = Math.random() < 0.5 ? 'it2ar' : 'ar2it';
+    const answer = dir === 'it2ar' ? w.ar : w.it;
+    const opts = [answer];
+    const seen = new Set([answer]);
+    shuffle(pool.slice()).some(p => {
+      const o = dir === 'it2ar' ? p.ar : p.it;
+      if (o !== answer && !seen.has(o)) { seen.add(o); opts.push(o); }
+      return opts.length === 4;
+    });
+    return { word: w, dir, answer, opts: shuffle(opts) };
+  });
+
+  if (!quizQs.length) { showToast('لا توجد كلمات كافية في هذا القسم'); return; }
+
+  quizI = 0;
+  quizScore = 0;
+  quizAnswered = false;
+  quizShell(false, true);
+  renderQuizQ();
+}
+
+function renderQuizQ() {
+  const q = quizQs[quizI];
+  const total = quizQs.length;
+  quizAnswered = false;
+  const area = document.getElementById('quizArea');
+  const prompt = q.dir === 'it2ar'
+    ? `<div class="qq-word"><span id="qqSpoken">${q.word.it}</span><button class="wi-speaker" id="qqSpeak" title="استمع">🔊</button></div>`
+    : `<div class="qq-word ar">${q.word.ar}</div>`;
+  area.innerHTML = `
+    <div class="quiz-top">
+      <span>${quizSec.emoji} ${quizSec.title}</span>
+      <span class="qt-score">النتيجة: ${quizScore} ✅</span>
+    </div>
+    <div class="quiz-bar"><i style="width:${Math.round(quizI / total * 100)}%"></i></div>
+    <div class="quiz-card">
+      <div class="qq-num">سؤال ${quizI + 1} من ${total}</div>
+      ${prompt}
+      <div class="qq-hint">${q.dir === 'it2ar' ? 'ما معنى هذه الكلمة بالعربية؟' : 'ما الكلمة الإيطالية المقابلة؟'}</div>
+      <div class="qq-opts">${q.opts.map((o, i) => `<button class="qq-opt" data-o="${i}">${o}</button>`).join('')}</div>
+    </div>
+  `;
+  area.querySelectorAll('.qq-opt').forEach(btn => {
+    btn.onclick = () => answerQuiz(parseInt(btn.dataset.o), btn);
+  });
+  const sp = document.getElementById('qqSpeak');
+  if (sp) sp.onclick = () => speak(q.word.it);
+  if (q.dir === 'it2ar') speak(q.word.it);
+}
+
+function answerQuiz(i, btn) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  const q = quizQs[quizI];
+  const ok = q.opts[i] === q.answer;
+  btn.parentElement.querySelectorAll('.qq-opt').forEach((b, j) => {
+    b.disabled = true;
+    if (q.opts[j] === q.answer) b.classList.add('correct');
+    else if (b === btn) b.classList.add('wrong');
+  });
+  if (ok) {
+    quizScore++;
+    if (!isLearned(quizSec.id, q.word.idx)) toggleLearned(quizSec.id, q.word.idx);
+    showToast('✅ إجابة صحيحة!');
+  } else {
+    showToast('❌ الصحيحة: ' + q.answer);
+  }
+  setTimeout(() => {
+    quizI++;
+    if (quizI < quizQs.length) renderQuizQ();
+    else quizEnd();
+  }, 1100);
+}
+
+function quizEnd() {
+  const total = quizQs.length;
+  const pct = Math.round(quizScore / total * 100);
+  const msg = pct === 100 ? '🌟 ممتاز! إتقان كامل'
+    : pct >= 70 ? '👏 أحسنت! قريب من الإتقان'
+    : pct >= 50 ? '👍 جيد — راجع الكلمات الصعبة'
+    : '📚 تحتاج مراجعة هذا القسم';
+  document.getElementById('quizArea').innerHTML = `
+    <div class="quiz-card quiz-result">
+      <div class="qr-emoji">${pct >= 70 ? '🏆' : pct >= 50 ? '💪' : '📖'}</div>
+      <div class="qr-score">${quizScore} / ${total}</div>
+      <div class="qr-pct">${pct}%</div>
+      <div class="qr-msg">${msg} — ${quizSec.emoji} ${quizSec.title}</div>
+      <div class="qr-actions">
+        <button class="qr-primary" onclick="startQuiz(${quizSec.id})">🔄 إعادة الاختبار</button>
+        <button class="qr-ghost" onclick="openQuiz()">🧪 اختيار قسم آخر</button>
+        <button class="qr-ghost" onclick="goHome()">◀ الأقسام</button>
+      </div>
+    </div>
+  `;
+  renderSections();
+  updateGlobalProgress();
 }
 
 // ==================== SCROLL TOP ====================

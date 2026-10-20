@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
-<link rel="stylesheet" href="style.css?v=11">
+<link rel="stylesheet" href="style.css?v=12">
 </head>
 <body>
 
@@ -50,6 +50,15 @@
     <div class="bar-bg"><div class="bar-fill" id="progressBar" style="width:0%"></div></div>
   </div>
 
+  <div class="quiz-entry" onclick="openQuiz()">
+    <span class="qe-emoji">🧪</span>
+    <div class="qe-text">
+      <b>اختبر نفسك</b>
+      <span>اختر أي قسم وأجب عن أسئلته — مع صوت النطق</span>
+    </div>
+    <span class="qe-go">ابدأ الاختبار ◀</span>
+  </div>
+
   <main>
     <div class="section-title">📚 الأقسام التعليمية</div>
     <div class="sections-grid" id="sectionsGrid"></div>
@@ -75,6 +84,15 @@
       </div>
     </div>
     <div id="modeContent"></div>
+  </main>
+</div>
+
+<!-- QUIZ VIEW -->
+<div class="quiz-view" id="quizView">
+  <main>
+    <button class="back-btn" onclick="goHome()">◀ العودة للأقسام</button>
+    <div id="quizPick"></div>
+    <div id="quizArea"></div>
   </main>
 </div>
 
@@ -109,10 +127,10 @@
   </div>
 </div>
 
-<script src="audio_index.js?v=11"></script>
-<script src="data1.js?v=11"></script>
-<script src="data2.js?v=11"></script>
-<script src="app.js?v=11"></script>
+<script src="audio_index.js?v=12"></script>
+<script src="data1.js?v=12"></script>
+<script src="data2.js?v=12"></script>
+<script src="app.js?v=12"></script>
 </body>
 </html>
 
