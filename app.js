@@ -155,11 +155,16 @@ function openSection(id) {
 }
 
 function setMode(mode) {
+  if (voiceActive && voiceRec) { try { voiceRec.stop(); } catch (e) {} }
+  clearTimeout(voiceTimer);
   currentMode = mode;
-  ['modeList', 'modeFlash', 'modeGrid'].forEach(id => document.getElementById(id).classList.remove('active'));
+  ['modeList', 'modeFlash', 'modeGrid', 'modeVoice'].forEach(id => document.getElementById(id).classList.remove('active'));
   document.getElementById('mode' + mode.charAt(0).toUpperCase() + mode.slice(1)).classList.add('active');
   flashIndex = 0;
   flashRevealed = false;
+  if (mode === 'voice' && voiceSec && voiceSec.id !== (currentSection && currentSection.id)) {
+    voiceQs = [];
+  }
   renderMode();
 }
 
@@ -182,6 +187,7 @@ function renderMode() {
   const el = document.getElementById('modeContent');
   if (currentMode === 'list') renderList(el);
   else if (currentMode === 'flash') renderFlash(el);
+  else if (currentMode === 'voice') renderVoice(el);
   else renderGrid(el);
 }
 
@@ -482,6 +488,196 @@ function quizEnd() {
   `;
   renderSections();
   updateGlobalProgress();
+}
+
+// ==================== VOICE ====================
+let voiceSec = null;
+let voiceQs = [];
+let voiceI = 0;
+let voiceScores = [];
+let voiceRec = null;
+let voiceActive = false;
+let voiceDone = false;
+let voiceTimer = null;
+
+function speechSupported() {
+  return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+}
+
+function __normCompare(t) {
+  return (t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z\s']/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function levenshtein(a, b) {
+  const m = a.length, n = b.length;
+  if (!m) return n;
+  if (!n) return m;
+  let prev = Array.from({ length: n + 1 }, (_, i) => i);
+  for (let i = 1; i <= m; i++) {
+    const cur = [i];
+    for (let j = 1; j <= n; j++) {
+      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    }
+    prev = cur;
+  }
+  return prev[n];
+}
+
+function speechSimilarity(expected, heard) {
+  const a = __normCompare(expected), b = __normCompare(heard);
+  if (!a && !b) return 100;
+  if (!a || !b) return 0;
+  const d = levenshtein(a, b);
+  return Math.max(0, Math.min(100, Math.round((1 - d / Math.max(a.length, b.length)) * 100)));
+}
+
+function voiceSession(sec) {
+  voiceSec = sec;
+  const pool = sec.words.map((w, i) => ({ it: w[0], ar: w[1], dg: w[2], idx: i })).filter(w => w.it && __normCompare(w.it));
+  voiceQs = shuffle(pool.slice()).slice(0, Math.min(10, pool.length));
+  voiceI = 0;
+  voiceScores = [];
+}
+
+function renderVoice(el) {
+  if (!currentSection) return;
+  if (!speechSupported()) {
+    el.innerHTML = `
+    <div class="quiz-card" style="text-align:center">
+      <div class="qr-emoji">🎙️</div>
+      <h3 style="margin:10px 0">تحدّي الصوت غير مدعوم هذا التصفح</h3>
+      <p style="color:var(--text2);line-height:1.9">يكتب النتائج عبر ميكروفون المتصفح، ويحتاج Chrome أو Edge على الجوال أو الكمبيوتر.<br>في الآيفون استخدم Safari؟ غير مدعوم حالياً — باقي الأوضاع تعمل عادي ✅</p>
+    </div>`;
+    return;
+  }
+  if (!voiceQs.length || !voiceSec || voiceSec.id !== currentSection.id) voiceSession(currentSection);
+  if (!voiceQs.length) {
+    el.innerHTML = `<div class="quiz-card" style="text-align:center"><div class="qr-emoji">🎙️</div><h3>لا توجد كلمات لهذا القسم</h3></div>`;
+    return;
+  }
+  if (voiceI >= voiceQs.length) return renderVoiceEnd(el);
+
+  const q = voiceQs[voiceI];
+  voiceDone = false;
+  el.innerHTML = `
+  <div class="quiz-top">
+    <span>تحدّي الصوت 🎙️</span>
+    <span>${voiceI + 1} / ${voiceQs.length}</span>
+  </div>
+  <div class="quiz-bar"><i style="width:${(voiceI / voiceQs.length) * 100}%"></i></div>
+  <div class="quiz-card voice-card">
+    <div class="qq-num">اسمع الكلمة ثم كرّرها بصوتك</div>
+    <div class="vv-word">${q.it}</div>
+    <div class="vv-ar">${q.ar || ''}</div>
+    <button class="vv-play" onclick="speak('${(q.it || '').replace(/'/g, "\\'")}', this)">🔊 استمع مرة أخرى</button>
+    <button class="vv-mic" id="vvMic" onclick="voiceMicClick()">🎙️ اضغط وتكلّم</button>
+    <div class="vv-live" id="vvLive"></div>
+    <div class="vv-result" id="vvResult"></div>
+    <div class="vv-next" id="vvNext" style="display:none"><button class="qr-primary" onclick="voiceNext()">التالي ▶</button></div>
+  </div>`;
+  speak(q.it);
+}
+
+function voiceMicClick() {
+  if (voiceDone) return;
+  if (voiceActive && voiceRec) { try { voiceRec.stop(); } catch (e) {} return; }
+  startVoiceListening();
+}
+
+function startVoiceListening() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR || voiceDone) return;
+  const q = voiceQs[voiceI];
+  let heard = '', best = 0;
+  voiceRec = new SR();
+  voiceRec.lang = 'it-IT';
+  voiceRec.interimResults = true;
+  voiceRec.maxAlternatives = 5;
+  voiceRec.continuous = false;
+  const mic = document.getElementById('vvMic');
+  const live = document.getElementById('vvLive');
+  voiceActive = true;
+  if (mic) { mic.classList.add('listening'); mic.textContent = '🔴 جارٍ الاستماع… (اضغط للإيقاف)'; }
+  if (live) live.textContent = '';
+  voiceRec.onresult = (e) => {
+    let tb = 0, th = '';
+    for (let i = 0; i < e.results.length; i++) {
+      for (const alt of e.results[i]) {
+        const s = speechSimilarity(q.it, alt.transcript);
+        if (s > tb) { tb = s; th = alt.transcript; }
+      }
+    }
+    if (th) { heard = th; best = tb; }
+    if (live && th) live.textContent = '«' + th + '»';
+  };
+  const finish = () => {
+    if (!voiceActive) return;
+    voiceActive = false;
+    clearTimeout(voiceTimer);
+    if (mic) { mic.classList.remove('listening'); mic.textContent = '🎙️ اضغط وتكلّم'; }
+    if (heard.trim()) finalizeVoice(best, heard.trim());
+    else if (live) live.textContent = '';
+  };
+  voiceRec.onend = finish;
+  voiceRec.onerror = (e) => {
+    voiceActive = false;
+    clearTimeout(voiceTimer);
+    if (mic) { mic.classList.remove('listening'); mic.textContent = '🎙️ اضغط وتكلّم'; }
+    if (e.error === 'not-allowed' || e.error === 'service-not-allowed') showToast('اسمح للمتصفح باستخدام الميكروفون');
+    else if (e.error === 'network') showToast('التعرّف على الصوت يحتاج إنترنت');
+    else if (e.error === 'no-speech') showToast('ما سمعتك — حاول مرة ثانية');
+  };
+  try { voiceRec.start(); } catch (e) { return; }
+  voiceTimer = setTimeout(() => { try { voiceRec.stop(); } catch (e) {} }, 8000);
+}
+
+function finalizeVoice(pct, heard) {
+  if (voiceDone) return;
+  voiceDone = true;
+  voiceScores.push(pct);
+  const q = voiceQs[voiceI];
+  const pass = pct >= 70;
+  const res = document.getElementById('vvResult');
+  if (res) res.innerHTML = `
+    <div class="vv-pct ${pass ? 'ok' : 'low'}">${pct}%</div>
+    <div class="vv-heard">سمعتك: «${heard}»</div>
+    <div class="vv-exp">الصحيح: «${q.it}»</div>
+    <div class="vv-note">${pass ? '✅ نطق ممتاز — انحفظت مع الكلمات المحفوظة' : '🔁 قريب… أعد المحاولة لتصل 70%'}</div>`;
+  if (pass && !isLearned(voiceSec.id, q.idx)) toggleLearned(voiceSec.id, q.idx);
+  const mic = document.getElementById('vvMic');
+  if (mic) { mic.disabled = true; mic.style.opacity = '.45'; }
+  const nx = document.getElementById('vvNext');
+  if (nx) nx.style.display = 'flex';
+  renderSections();
+  updateGlobalProgress();
+}
+
+function voiceNext() {
+  if (!voiceDone) return;
+  voiceI++;
+  const el = document.getElementById('modeContent');
+  if (voiceI >= voiceQs.length) renderVoiceEnd(el);
+  else renderVoice(el);
+}
+
+function renderVoiceEnd(el) {
+  const sum = voiceScores.reduce((a, b) => a + b, 0);
+  const avg = voiceScores.length ? Math.round(sum / voiceScores.length) : 0;
+  const emoji = avg >= 85 ? '🏆' : avg >= 70 ? '🎉' : avg >= 50 ? '💪' : '🎙️';
+  const msg = avg >= 85 ? 'نطقك ممتاز! استمر' : avg >= 70 ? 'نتيجة حلوة — كرّر لتحسين النطق' : avg >= 50 ? 'بداية جيدة — اسمع الكلمة أكثر وكرّر' : 'لا بأس، الاستماع المتكرر يصنع الفرق';
+  el.innerHTML = `
+  <div class="quiz-card" style="text-align:center">
+    <div class="qr-emoji">${emoji}</div>
+    <h3 style="margin:8px 0">نتيجة تحدّي الصوت</h3>
+    <div class="qr-score" style="margin:10px 0">${avg}%</div>
+    <div class="qr-sub">متوسط النطق الصحيح عبر ${voiceScores.length} كلمة</div>
+    <div style="color:var(--text2);margin:10px 0 18px">${msg}</div>
+    <div class="qr-actions">
+      <button class="qr-primary" onclick="voiceSession(currentSection);renderMode()">🔄 إعادة</button>
+      <button class="qr-outline" onclick="setMode('list')">📋 العودة للكلمات</button>
+      <button class="qr-outline" onclick="goHome()">🏠 الأقسام</button>
+    </div>
+  </div>`;
 }
 
 // ==================== SCROLL TOP ====================
