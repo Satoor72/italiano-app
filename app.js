@@ -508,8 +508,16 @@ let voiceState = null;
 
 function nativeSR() {
   try {
-    if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) {
-      return (window.Capacitor.Plugins && window.Capacitor.Plugins.SpeechRecognition) || null;
+    const C = window.Capacitor;
+    if (C && C.isNativePlatform && C.isNativePlatform()) {
+      if (C.Plugins && C.Plugins.SpeechRecognition) return C.Plugins.SpeechRecognition;
+      if (typeof C.registerPlugin === 'function') {
+        try {
+          const p = C.registerPlugin('SpeechRecognition', {});
+          if (p) return p;
+        } catch (e) {}
+      }
+      return null;
     }
   } catch (e) {}
   return null;
@@ -517,6 +525,12 @@ function nativeSR() {
 
 function speechSupported() {
   return !!(nativeSR() || window.SpeechRecognition || window.webkitSpeechRecognition);
+}
+
+function voiceEngineLabel() {
+  if (nativeSR()) return '🎙️ محرّك: تعرّف صوتي أصلي (Google)';
+  if (window.SpeechRecognition || window.webkitSpeechRecognition) return '🌐 محرّك: متصفح (يعمل أفضل في Chrome)';
+  return '⚠️ لا يوجد محرّك صوت متاح';
 }
 
 function __normCompare(t) {
@@ -587,6 +601,7 @@ function renderVoice(el) {
     <button class="vv-play" onclick="speak('${(q.it || '').replace(/'/g, "\\'")}', this)">🔊 استمع مرة أخرى</button>
     <button class="vv-mic" id="vvMic" onclick="voiceMicClick()">🎙️ اضغط وتكلّم</button>
     <div class="vv-live" id="vvLive"></div>
+    <div class="vv-dbg" style="font-size:.75rem;color:var(--text2);opacity:.7;margin-top:6px">${voiceEngineLabel()}</div>
     <div class="vv-result" id="vvResult"></div>
     <div class="vv-next" id="vvNext" style="display:none"><button class="qr-primary" onclick="voiceNext()">التالي ▶</button></div>
   </div>`;

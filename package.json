@@ -33,8 +33,7 @@
       "icon-192.png",
       "apple-touch-icon.png",
       "favicon-32.png",
-      "sections-bg.jpg",
-      "capacitor.js"
+      "sections-bg.jpg"
     ],
     "win": {
       "icon": "icon.png",
