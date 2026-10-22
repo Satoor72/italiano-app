@@ -638,12 +638,21 @@ async function startVoiceListeningNative() {
     }
   };
   try {
+    if (typeof p.available === 'function') {
+      const av = await p.available();
+      if (av && av.available === false) {
+        cleanup();
+        voiceMicReset();
+        showToast('خدمة التعرّف الصوتي غير مثبّتة على الجهاز — فعّل Google (تطبيق البحث) لتعمل');
+        return;
+      }
+    }
     const perm = await p.requestPermissions();
     const st = perm && (perm.speechRecognition || perm.recognition);
     if (st && st !== 'granted' && st !== 'prompt') {
       cleanup();
       voiceMicReset();
-      showToast('اسمح للميكروفون من إعدادات التطبيق');
+      showToast('اسمح للميكروفون من صلاحيات التطبيق');
       return;
     }
     voicePartial = await p.addListener('partialResults', (d) => {
@@ -661,8 +670,17 @@ async function startVoiceListeningNative() {
     cleanup();
     voiceMicReset();
     const msg = String((e && (e.message || e.errorMessage)) || e);
-    if (/internet|network|connection/i.test(msg)) showToast('التعرّف الصوتي يحتاج إنترنت — تأكد من الاتصال');
-    else showToast('تعذّر تشغيل الميكروفون — تأكد من تفعيل خدمة الصوت في الجهاز');
+    if (/not available|unavailable|not implemented/i.test(msg)) {
+      showToast('خدمة التعرّف الصوتي غير متوفرة على الجهاز — ثبّت/فعّل تطبيق Google وأضف حزمة اللغة الإيطالية');
+    } else if (/internet|network|connection|timeout|server/i.test(msg)) {
+      showToast('التعرّف الصوتي يحتاج إنترنت (أو نزّل اللغة الإيطالية للعمل دون اتصال)');
+    } else if (/permission/i.test(msg)) {
+      showToast('اسمح للميكروفون من صلاحيات التطبيق');
+    } else if (/busy/i.test(msg)) {
+      showToast('خدمة التعرّف مشغولة — انتظر لحظة وأعد المحاولة');
+    } else {
+      showToast('تعذّر التشغيل: ' + msg.slice(0, 60));
+    }
   }
 }
 
