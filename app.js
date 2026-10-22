@@ -783,10 +783,10 @@ function renderVoiceEnd(el) {
   const emoji = avg >= 85 ? '🏆' : avg >= 70 ? '🎉' : avg >= 50 ? '💪' : '🎙️';
   const msg = avg >= 85 ? 'نطقك ممتاز! استمر' : avg >= 70 ? 'نتيجة حلوة — كرّر لتحسين النطق' : avg >= 50 ? 'بداية جيدة — اسمع الكلمة أكثر وكرّر' : 'لا بأس، الاستماع المتكرر يصنع الفرق';
   el.innerHTML = `
-  <div class="quiz-card" style="text-align:center">
+  <div class="quiz-card voice-card voice-end">
     <div class="qr-emoji">${emoji}</div>
-    <h3 style="margin:8px 0">نتيجة تحدّي الصوت</h3>
-    <div class="qr-score" style="margin:10px 0">${avg}%</div>
+    <h3 style="margin:8px 0;font-family:'Playfair Display',serif;font-size:1.6rem">نتيجة تحدّي الصوت</h3>
+    <div class="vv-end-pct">${avg}%</div>
     <div class="qr-sub">متوسط النطق الصحيح عبر ${voiceScores.length} كلمة</div>
     <div style="color:var(--text2);margin:10px 0 18px">${msg}</div>
     <div class="qr-actions">

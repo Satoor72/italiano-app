@@ -1,4 +1,4 @@
-const CACHE = 'ncx-italiano-v20';
+const CACHE = 'ncx-italiano-v21';
 const CORE = ['./index.html', './style.css', './data1.js', './data2.js', './audio_index.js', './app.js'];
 const ASSETS = [
   './index.html',

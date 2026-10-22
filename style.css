@@ -625,6 +625,8 @@ body.install-show .scroll-top { bottom:92px; }
 .vv-eng{display:inline-flex;align-items:center;justify-content:center;padding:4px 10px;border-radius:999px;background:rgba(255,215,0,.14);color:#ffd700;font-size:.78rem;border:1px solid rgba(255,215,0,.45);white-space:nowrap}
 .vv-word{font-family:'Playfair Display',serif;font-weight:800;font-size:3rem;color:#ffd700;margin:18px 0 8px;line-height:1.25;text-shadow:0 0 22px rgba(255,215,0,.28);letter-spacing:.3px;word-break:break-word}
 .vv-ar{color:var(--text2);font-size:1.25rem;margin-bottom:20px}
+.voice-end .qr-emoji{font-size:2.8rem}
+.vv-end-pct{display:inline-flex;align-items:center;justify-content:center;min-width:160px;padding:16px 32px;margin:14px auto 10px;border-radius:999px;background:radial-gradient(circle at 30% 30%,#fff4b0,#ffd700);color:#1a1200;font-family:'Playfair Display',serif;font-weight:800;font-size:3.6rem;box-shadow:0 0 0 6px rgba(255,215,0,.16),0 18px 40px rgba(255,215,0,.25);letter-spacing:2px;text-shadow:0 2px 12px rgba(255,255,255,.4)}
 .vv-ar{color:var(--text2);font-size:1.2rem;margin-bottom:18px}
 .vv-play{display:inline-block;background:transparent;border:1.5px solid #ffd700;color:#ffd700;border-radius:50px;padding:10px 22px;font:inherit;font-size:.9rem;cursor:pointer;transition:.2s}
 .vv-play:hover{background:rgba(255,215,0,.12)}
