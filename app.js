@@ -155,7 +155,11 @@ function openSection(id) {
 }
 
 function setMode(mode) {
-  if (voiceActive && voiceRec) { try { voiceRec.stop(); } catch (e) {} }
+  const n = nativeSR();
+  if (voiceActive) {
+    if (n) { try { n.stop(); } catch (e) {} }
+    else if (voiceRec) { try { voiceRec.stop(); } catch (e) {} }
+  }
   clearTimeout(voiceTimer);
   currentMode = mode;
   ['modeList', 'modeFlash', 'modeGrid', 'modeVoice'].forEach(id => document.getElementById(id).classList.remove('active'));
@@ -499,9 +503,20 @@ let voiceRec = null;
 let voiceActive = false;
 let voiceDone = false;
 let voiceTimer = null;
+let voicePartial = null;
+let voiceState = null;
+
+function nativeSR() {
+  try {
+    if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) {
+      return (window.Capacitor.Plugins && window.Capacitor.Plugins.SpeechRecognition) || null;
+    }
+  } catch (e) {}
+  return null;
+}
 
 function speechSupported() {
-  return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+  return !!(nativeSR() || window.SpeechRecognition || window.webkitSpeechRecognition);
 }
 
 function __normCompare(t) {
@@ -580,8 +595,75 @@ function renderVoice(el) {
 
 function voiceMicClick() {
   if (voiceDone) return;
+  const n = nativeSR();
+  if (n) {
+    if (voiceActive) { try { n.stop(); } catch (e) {} return; }
+    startVoiceListeningNative();
+    return;
+  }
   if (voiceActive && voiceRec) { try { voiceRec.stop(); } catch (e) {} return; }
   startVoiceListening();
+}
+
+function voiceMicReset() {
+  const mic = document.getElementById('vvMic');
+  if (mic) { mic.classList.remove('listening'); mic.textContent = '🎙️ اضغط وتكلّم'; }
+}
+
+async function startVoiceListeningNative() {
+  const q = voiceQs[voiceI];
+  const p = nativeSR();
+  if (!p) return;
+  const live = document.getElementById('vvLive');
+  let heard = [];
+  voiceActive = true;
+  voiceDone = false;
+  const mic = document.getElementById('vvMic');
+  if (mic) { mic.classList.add('listening'); mic.textContent = '🔴 جارٍ الاستماع… (اضغط للإيقاف)'; }
+  if (live) live.textContent = '';
+  const cleanup = () => {
+    voiceActive = false;
+    clearTimeout(voiceTimer);
+    if (voicePartial) { try { voicePartial.remove(); } catch (e) {} voicePartial = null; }
+    if (voiceState) { try { voiceState.remove(); } catch (e) {} voiceState = null; }
+  };
+  const finish = () => {
+    if (!voiceActive) return;
+    cleanup();
+    voiceMicReset();
+    if (heard.length) {
+      let bh = heard[0], bb = -1;
+      heard.forEach(t => { const s = speechSimilarity(q.it, t); if (s > bb) { bb = s; bh = t; } });
+      finalizeVoice(bb, String(bh).trim());
+    }
+  };
+  try {
+    const perm = await p.requestPermissions();
+    const st = perm && (perm.speechRecognition || perm.recognition);
+    if (st && st !== 'granted' && st !== 'prompt') {
+      cleanup();
+      voiceMicReset();
+      showToast('اسمح للميكروفون من إعدادات التطبيق');
+      return;
+    }
+    voicePartial = await p.addListener('partialResults', (d) => {
+      if (d && d.matches && d.matches.length) {
+        heard = d.matches.slice();
+        if (live) live.textContent = '«' + heard[0] + '»';
+      }
+    });
+    voiceState = await p.addListener('listeningState', (d) => {
+      if (d && d.status === 'stopped') finish();
+    });
+    await p.start({ language: 'it-IT', maxResults: 5, partialResults: true, popup: false });
+    voiceTimer = setTimeout(() => { try { p.stop(); } catch (e) {} }, 8000);
+  } catch (e) {
+    cleanup();
+    voiceMicReset();
+    const msg = String((e && (e.message || e.errorMessage)) || e);
+    if (/internet|network|connection/i.test(msg)) showToast('التعرّف الصوتي يحتاج إنترنت — تأكد من الاتصال');
+    else showToast('تعذّر تشغيل الميكروفون — تأكد من تفعيل خدمة الصوت في الجهاز');
+  }
 }
 
 function startVoiceListening() {
