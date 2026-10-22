@@ -621,8 +621,11 @@ body.install-show .scroll-top { bottom:92px; }
 
 /* ==== VOICE MODE ==== */
 .voice-card{text-align:center}
-.vv-word{font-family:'Playfair Display',serif;font-weight:800;font-size:2.6rem;color:#ffd700;margin:14px 0 4px;line-height:1.2;text-shadow:0 0 18px rgba(255,215,0,.25)}
-.vv-ar{color:var(--text2);font-size:1.05rem;margin-bottom:16px}
+.vv-topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.vv-eng{display:inline-flex;align-items:center;justify-content:center;padding:4px 10px;border-radius:999px;background:rgba(255,215,0,.14);color:#ffd700;font-size:.78rem;border:1px solid rgba(255,215,0,.45);white-space:nowrap}
+.vv-word{font-family:'Playfair Display',serif;font-weight:800;font-size:3rem;color:#ffd700;margin:18px 0 8px;line-height:1.25;text-shadow:0 0 22px rgba(255,215,0,.28);letter-spacing:.3px;word-break:break-word}
+.vv-ar{color:var(--text2);font-size:1.25rem;margin-bottom:20px}
+.vv-ar{color:var(--text2);font-size:1.2rem;margin-bottom:18px}
 .vv-play{display:inline-block;background:transparent;border:1.5px solid #ffd700;color:#ffd700;border-radius:50px;padding:10px 22px;font:inherit;font-size:.9rem;cursor:pointer;transition:.2s}
 .vv-play:hover{background:rgba(255,215,0,.12)}
 .vv-mic{display:block;width:min(260px,80%);margin:18px auto 8px;padding:16px;border-radius:50px;border:none;cursor:pointer;font:inherit;font-size:1rem;font-weight:700;color:#111;background:linear-gradient(135deg,#ffd700,#ffb300);box-shadow:0 6px 24px rgba(255,215,0,.35);transition:.2s}

@@ -528,9 +528,9 @@ function speechSupported() {
 }
 
 function voiceEngineLabel() {
-  if (nativeSR()) return '🎙️ محرّك: تعرّف صوتي أصلي (Google)';
-  if (window.SpeechRecognition || window.webkitSpeechRecognition) return '🌐 محرّك: متصفح (يعمل أفضل في Chrome)';
-  return '⚠️ لا يوجد محرّك صوت متاح';
+  if (nativeSR()) return '🎙️ أصلي';
+  if (window.SpeechRecognition || window.webkitSpeechRecognition) return '🌐 متصفح';
+  return '';
 }
 
 function __normCompare(t) {
@@ -595,13 +595,15 @@ function renderVoice(el) {
   </div>
   <div class="quiz-bar"><i style="width:${(voiceI / voiceQs.length) * 100}%"></i></div>
   <div class="quiz-card voice-card">
-    <div class="qq-num">اسمع الكلمة ثم كرّرها بصوتك</div>
+    <div class="vv-topbar">
+      <div class="qq-num">اسمع الكلمة ثم كرّرها بصوتك</div>
+      <div class="vv-eng">${voiceEngineLabel()}</div>
+    </div>
     <div class="vv-word">${q.it}</div>
     <div class="vv-ar">${q.ar || ''}</div>
     <button class="vv-play" onclick="speak('${(q.it || '').replace(/'/g, "\\'")}', this)">🔊 استمع مرة أخرى</button>
     <button class="vv-mic" id="vvMic" onclick="voiceMicClick()">🎙️ اضغط وتكلّم</button>
     <div class="vv-live" id="vvLive"></div>
-    <div class="vv-dbg" style="font-size:.75rem;color:var(--text2);opacity:.7;margin-top:6px">${voiceEngineLabel()}</div>
     <div class="vv-result" id="vvResult"></div>
     <div class="vv-next" id="vvNext" style="display:none"><button class="qr-primary" onclick="voiceNext()">التالي ▶</button></div>
   </div>`;
