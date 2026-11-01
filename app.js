@@ -627,10 +627,12 @@ function voiceMicReset() {
   if (mic) { mic.classList.remove('listening'); mic.textContent = '🎙️ اضغط وتكلّم'; }
 }
 
-async function startVoiceListeningNative() {
+async function startVoiceListeningNative(offlineFirst, allowRetry) {
   const q = voiceQs[voiceI];
   const p = nativeSR();
   if (!p) return;
+  if (offlineFirst === undefined) offlineFirst = true;
+  if (allowRetry === undefined) allowRetry = true;
   const live = document.getElementById('vvLive');
   let heard = [];
   voiceActive = true;
@@ -652,6 +654,11 @@ async function startVoiceListeningNative() {
       let bh = heard[0], bb = -1;
       heard.forEach(t => { const s = speechSimilarity(q.it, t); if (s > bb) { bb = s; bh = t; } });
       finalizeVoice(bb, String(bh).trim());
+      return;
+    }
+    if (allowRetry && offlineFirst) {
+      if (live) live.textContent = '';
+      setTimeout(() => { if (!voiceDone) startVoiceListeningNative(false, false); }, 250);
     }
   };
   try {
@@ -681,7 +688,7 @@ async function startVoiceListeningNative() {
     voiceState = await p.addListener('listeningState', (d) => {
       if (d && d.status === 'stopped') finish();
     });
-    await p.start({ language: 'it-IT', maxResults: 5, partialResults: true, popup: false });
+    await p.start({ language: 'it-IT', maxResults: 5, partialResults: true, popup: false, preferOffline: !!offlineFirst });
     voiceTimer = setTimeout(() => { try { p.stop(); } catch (e) {} }, 8000);
   } catch (e) {
     cleanup();

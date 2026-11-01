@@ -643,3 +643,28 @@ body.install-show .scroll-top { bottom:92px; }
 .vv-exp{font-size:.95rem;color:#ffd700;margin-bottom:6px;direction:ltr}
 .vv-note{font-size:.88rem;color:var(--text2)}
 .vv-next{margin-top:14px;justify-content:center}
+
+/* ==== INSTAGRAM FAB (bottom-left) ==== */
+.ig-fab{
+  position:fixed;
+  left:18px;
+  bottom:calc(18px + env(safe-area-inset-bottom, 0px));
+  width:54px; height:54px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; z-index:140; text-decoration:none;
+  background:radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+  box-shadow:0 8px 22px rgba(214,36,159,.4), 0 2px 8px rgba(0,0,0,.25);
+  transition:transform .2s ease, box-shadow .2s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.ig-fab:hover{ transform:translateY(-3px) scale(1.05); box-shadow:0 12px 28px rgba(214,36,159,.5); }
+.ig-fab:active{ transform:scale(.95); }
+
+/* keep the scroll-to-top button clear of the Instagram button */
+.scroll-top{ bottom:calc(84px + env(safe-area-inset-bottom, 0px)); }
+
+@media (max-width:520px){
+  .ig-fab{ width:48px; height:48px; left:14px; }
+  .ig-fab svg{ width:20px; height:20px; }
+  .scroll-top{ width:44px; height:44px; left:16px; bottom:calc(74px + env(safe-area-inset-bottom, 0px)); }
+}

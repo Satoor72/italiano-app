@@ -1,0 +1,20 @@
+{
+  "errors": [],
+  "v22": 5,
+  "sections": 17,
+  "total": 5897,
+  "sec17": 260,
+  "igExists": true,
+  "igPos": {
+    "left": 18,
+    "bottom": 18,
+    "w": 54,
+    "pos": "fixed",
+    "z": "140"
+  },
+  "scrollTopBottom": "84px",
+  "audio17": "260/260",
+  "sec17Rendered": true,
+  "voiceFns": "function,function,function",
+  "fnErrors": []
+}
