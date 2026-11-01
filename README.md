@@ -1,75 +1,52 @@
-<div dir="rtl">
-
 <p align="center">
-  <img src="app-icon.png" alt="IT Ncx - تطبيق تعلم الإيطالية" width="360">
+  <img src="app-icon.png" alt="IT Ncx — Italian Learning App" width="320">
 </p>
 
-<h1 align="center">🇮🇹 IT Ncx — تطبيق تعلم اللغة الإيطالية</h1>
+<h1 align="center">🇮🇹 Italian Learning App — IT Ncx</h1>
 
-**IT Ncx** تطبيق لتعلّم اللغة الإيطالية من الصفر — أكثر من **5600 كلمة** موزّعة على **16 قسم**، مع الترجمة العربية والنطق الصوتي، وواجهة عربية كاملة (RTL) بوضع ليلي/نهاري.
+<p align="center"><b>Learn Italian in a simple, interactive, and enjoyable way!</b></p>
+
+An educational application designed to help users learn the Italian language, improve their vocabulary, and develop their language skills through an easy-to-use interface.
 
 ---
 
-## ⬇️ تحميل التطبيق
+## 📥 Download
 
-### 💻 الكمبيوتر (Windows)
-من صفحة [Releases](https://github.com/Satoor72/italiano-app/releases/tag/v1.0.0):
-
-| الملف | الوصف |
+| Platform | App |
 |---|---|
-| **IT Ncx Setup 1.0.0.exe** | مثبّت — ينشئ اختصار على سطح المكتب باسم *IT Ncx* |
-| **IT Ncx 1.0.0.exe** | نسخة محمولة — بدون تثبيت، تشتغل مباشرة |
+| 💻 **Windows** | **[Download for Windows](https://github.com/Satoor72/italiano-app/releases/download/v1.1.1/IT-Ncx-Setup-1.1.1.exe)** |
+| 🤖 **Android** | **[Download APK](https://github.com/Satoor72/italiano-app/releases/download/v1.1.1/IT-Ncx-1.1.1.apk)** |
+| 📱 **iPhone / iPad** | **[Open the app](https://satoor72.github.io/italiano-app/)** |
 
-### 📱 الهواتف (أندرويد وآيفون)
-افتح الرابط من متصفح هاتفك:
-
-**https://satoor72.github.io/italiano-app/**
-
-ثم من قائمة المتصفح اختر **"إضافة إلى الشاشة الرئيسية"** — سيظهر التطبيق باسم **IT Ncx** ويشتغل **بدون إنترنت**.
+> iPhone: open the link in **Safari** → Share → **Add to Home Screen**.
+> After installing, the app works offline.
 
 ---
 
-## ✨ المميزات
+## ✨ Features
+- 📚 Learn common Italian words and phrases.
+- 🔤 Improve vocabulary and language understanding.
+- 🧠 Interactive learning experience.
+- 🎯 Beginner-friendly design.
+- 🇮🇹 Explore the Italian language step by step.
+- 🎨 Clean and user-friendly interface.
 
-- 📚 **16 قسم**: التحيات، الكلمة الشائعة، الطعام، السفر، الأسرة، الأرقام (0-100)، الوصف، الأفعال... وغيرها
-- 🗣️ **نطق إيطالي حقيقي** بأمر واحد (Web Speech - it-IT)
-- 🔎 **بحث فوري** بالعربية أو الإيطالية أو الرقم
-- 🃏 **3 أنماط تعلّم**: قائمة / بطاقات محادثة / شبكة كلمات
-- ✅ **تتبّع التقدّم** — علّم الكلمات المُتعلّمة ويُحفظ تلقائياً
-- 🌙 **وضع ليلي/نهاري**
-- 📱 **تصميم كامل للجوال** + **PWA** يعمل بدون إنترنت
-- 💻 **تطبيق سطح مكتب** بأيقونة واسم **IT Ncx**
+## 🎯 Goal
+The goal of this project is to make learning Italian easier, more accessible, and enjoyable for everyone, especially beginners.
 
----
+## 🚀 Getting Started
+1. Download or clone this repository.
+2. Follow the installation instructions.
+3. Launch the application and start learning Italian!
 
-## 🖼️ أحجام الصور المستخدمة
+## 🛠️ Technologies
+Built with modern technologies to provide a smooth and accessible learning experience.
 
-| الملف | المقاس | الحجم | وين يُستخدم |
-|---|---|---|---|
-| `icon.png` | **512×512** | 706 KB | أيقونة التطبيق الرئيسية (PWA + Windows exe) |
-| `icon-192.png` | **192×192** | 103 KB | أيقونة أندرويد على الشاشة الرئيسية |
-| `apple-touch-icon.png` | **180×180** | 91 KB | أيقونة آيفون (iOS Safari) |
-| `favicon-32.png` | **32×32** | 3 KB | أيقونة تبويب المتصفح |
-| `hero-bg.jpg` | **1280×853** | 249 KB | خلفية القسم العلوي (مضغوطة JPG) |
-| `sections-bg.jpg` | **1600×1200** | 365 KB | خلفية الصفحة الرئيسية (خلف المحتوى كاملاً) |
-| `app-icon.png` | **1024×1024** | 2.9 MB | صورة README في صفحة GitHub |
-| `icon.ico` | 256/48/32/16 | 11 KB | أيقونة ملفات Windows (.exe) |
+## 👨‍💻 Developer
+Created with passion for learning and technology.
 
-> ملاحظة: صور الأيقونات كلها من صورة **Classical Scholar Against the Italian Tricolor**، وخلفية الموقع من **Italia - A History in Infinite Layers**. أحجام PWA القياسية: 192 + 512 للأندرويد، 180 للآيفون.
-
-## 🖥️ التشغيل من المصدر
-
-```bash
-git clone https://github.com/Satoor72/italiano-app.git
-cd italiano-app
-# للموقع: افتح index.html مباشرة
-# للتطبيق:
-npm install
-npm start        # تشغيل
-npm run dist     # بناء ملفات Windows
-```
+**Prof. Hamel Hamida** · by **Ncx**
 
 ---
 
-<p align="center">صُنع بـ ❤️ — <b>IT Ncx</b> © 2026</p>
-</div>
+<p align="center"><b>Learn Italian. Build your vocabulary. Improve every day. 🇮🇹</b></p>
