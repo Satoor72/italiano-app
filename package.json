@@ -1,7 +1,7 @@
 {
   "name": "ncx-italiano",
   "productName": "IT Ncx",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "IT Ncx - تطبيق تعلم اللغة الإيطالية",
   "main": "main.js",
   "author": "Ncx",
@@ -34,7 +34,9 @@
       "apple-touch-icon.png",
       "favicon-32.png",
       "sections-bg.jpg",
-      "brand.webp"
+      "brand.webp",
+      "version.js",
+      "version.json"
     ],
     "win": {
       "icon": "icon.png",
@@ -59,11 +61,26 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "IT Ncx"
+      "shortcutName": "IT Ncx",
+      "artifactName": "IT-Ncx-Setup-${version}.${ext}"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "Satoor72",
+        "repo": "italiano-app",
+        "releaseType": "release"
+      }
+    ],
+    "portable": {
+      "artifactName": "IT-Ncx-${version}.${ext}"
     }
   },
   "devDependencies": {
     "electron": "^44.9.0",
     "electron-builder": "^26.15.3"
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.11"
   }
 }

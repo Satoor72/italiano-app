@@ -1,4 +1,4 @@
-const CACHE = 'ncx-italiano-v25';
+const CACHE = 'ncx-italiano-v26';
 const CORE = ['./index.html', './style.css', './data1.js', './data2.js', './audio_index.js', './app.js'];
 const ASSETS = [
   './index.html',
@@ -7,6 +7,8 @@ const ASSETS = [
   './data2.js',
   './audio_index.js',
   './app.js',
+  './version.js',
+  './version.json',
   './manifest.json',
   './icon.svg',
   './icon-maskable.svg',

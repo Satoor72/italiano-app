@@ -75,13 +75,30 @@ let __au = null;
 function __norm(t) {
   return (t || '').replace(/[^A-Za-z\u00C0-\u024F\s']/g, '').replace(/\s+/g, ' ').trim();
 }
+let __waveTimer = null;
+function waveOn() {
+  const w = document.getElementById('soundWave');
+  if (!w) return;
+  w.classList.add('on');
+  clearTimeout(__waveTimer);
+  __waveTimer = setTimeout(waveOff, 9000);
+}
+function waveOff() {
+  const w = document.getElementById('soundWave');
+  if (w) w.classList.remove('on');
+  clearTimeout(__waveTimer);
+}
+
 function speak(text) {
   const idx = window.AUDIO_INDEX || {};
   const key = idx[text] ? text : (idx[__norm(text)] ? __norm(text) : null);
   if (key) {
     if (__au) { try { __au.pause(); } catch (e) {} }
     __au = new Audio('audio/' + idx[key]);
-    __au.play().catch(() => __speakFallback(text));
+    waveOn();
+    __au.onended = waveOff;
+    __au.onerror = () => { waveOff(); __speakFallback(text); };
+    __au.play().catch(() => { waveOff(); __speakFallback(text); });
     return;
   }
   __speakFallback(text);
@@ -93,6 +110,9 @@ function __speakFallback(text) {
     u.lang = 'it-IT';
     u.rate = 0.88;
     u.pitch = 1.0;
+    u.onend = waveOff;
+    u.onerror = waveOff;
+    waveOn();
     window.speechSynthesis.speak(u);
   }
 }
@@ -229,21 +249,32 @@ function toggleLearnedUI(idx, btn) {
   renderSections();
 }
 
+let flashEnter = '';
+
 function renderFlash(el) {
   if (!filteredWords.length) { el.innerHTML = '<p style="text-align:center;color:var(--text2);padding:40px;">لا توجد نتائج</p>'; return; }
   if (flashIndex >= filteredWords.length) flashIndex = 0;
   const w = filteredWords[flashIndex];
   const total = filteredWords.length;
   const lr = isLearned(currentSection.id, w.idx);
+  const safeIt = w.it.replace(/'/g, "\\'");
 
   el.innerHTML = `
     <div class="flash-wrap">
-      <div class="flash-card ${flashRevealed ? 'revealed' : ''}" onclick="revealFlash()">
-        <div class="it-word">${w.it}</div>
-        ${flashRevealed
-          ? `<div class="ar-word">${w.ar}</div>${w.dg ? `<div class="flash-dg">${w.dg}</div>` : ''}`
-          : `<div class="hint-text">اضغط لعرض الترجمة</div>`}
-        ${flashRevealed ? `<div class="flash-stars">${lr ? '⭐' : ''}</div>` : ''}
+      <div class="flash-stage ${flashEnter ? 'enter-' + flashEnter : ''}" id="flashStage">
+        <div class="flash-card ${flashRevealed ? 'revealed' : ''}" id="flashCard" role="button" tabindex="0" aria-label="اقلب البطاقة">
+          <div class="flash-face flash-front">
+            <div class="it-word">${w.it}</div>
+            <div class="hint-text">👆 اضغط لعرض الترجمة</div>
+            <div class="swipe-hint"><span>→</span> اسحب للتنقّل <span>←</span></div>
+          </div>
+          <div class="flash-face flash-back">
+            <div class="it-word">${w.it}</div>
+            <div class="ar-word">${w.ar}</div>
+            ${w.dg ? `<div class="flash-dg">${w.dg}</div>` : ''}
+            ${lr ? '<div class="flash-stars">⭐</div>' : ''}
+          </div>
+        </div>
       </div>
       <div class="flash-nav">
         <button class="btn-prev" onclick="prevFlash()">◀ السابق</button>
@@ -253,26 +284,98 @@ function renderFlash(el) {
         <button class="btn-know" onclick="markFlash(true)">✅ عرفتها</button>
       </div>
       <div style="margin-top:14px;">
-        <button class="wi-speaker" style="width:48px;height:48px;font-size:1.4rem;" onclick="speak('${w.it.replace(/'/g, "\\'")}')">🔊</button>
+        <button class="wi-speaker" style="width:48px;height:48px;font-size:1.4rem;" onclick="speak('${safeIt}')">🔊</button>
       </div>
     </div>
   `;
+  flashEnter = '';
+  initFlashGesture();
+}
+
+function initFlashGesture() {
+  const stage = document.getElementById('flashStage');
+  const card = document.getElementById('flashCard');
+  if (!stage || !card) return;
+  let startX = 0, startY = 0, dx = 0, dy = 0, active = false, dragging = false, cancelled = false;
+
+  const reset = () => {
+    stage.style.transition = 'transform .3s cubic-bezier(.2,.8,.2,1), opacity .3s';
+    stage.style.transform = '';
+    stage.style.opacity = '';
+  };
+
+  stage.addEventListener('pointerdown', (e) => {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    active = true; dragging = false; cancelled = false;
+    startX = e.clientX; startY = e.clientY; dx = 0; dy = 0;
+    stage.style.transition = 'none';
+    try { stage.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+
+  stage.addEventListener('pointermove', (e) => {
+    if (!active || cancelled) return;
+    dx = e.clientX - startX;
+    dy = e.clientY - startY;
+    if (!dragging) {
+      if (Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy)) {
+        dragging = true;
+        stage.classList.add('dragging');
+      } else if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)) {
+        cancelled = true;
+        active = false;
+        reset();
+        return;
+      } else {
+        return;
+      }
+    }
+    stage.style.transform = `translateX(${dx}px) rotate(${dx / 45}deg)`;
+    stage.style.opacity = String(Math.max(.45, 1 - Math.abs(dx) / 520));
+  });
+
+  const finish = () => {
+    if (!active || cancelled) { active = false; return; }
+    active = false;
+    stage.classList.remove('dragging');
+    if (!dragging) { reset(); revealFlash(); return; }
+    if (Math.abs(dx) > 90) {
+      const left = dx < 0;
+      stage.style.transition = 'transform .24s ease, opacity .24s ease';
+      stage.style.transform = `translateX(${left ? -460 : 460}px) rotate(${left ? -12 : 12}deg)`;
+      stage.style.opacity = '0';
+      setTimeout(() => { if (left) nextFlash(); else prevFlash(); }, 200);
+    } else {
+      reset();
+    }
+  };
+
+  stage.addEventListener('pointerup', finish);
+  stage.addEventListener('pointercancel', () => { active = false; dragging = false; reset(); });
+
+  card.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); revealFlash(); }
+    else if (e.key === 'ArrowRight') { e.preventDefault(); nextFlash(); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); prevFlash(); }
+  });
 }
 
 function revealFlash() {
+  const card = document.getElementById('flashCard');
   flashRevealed = !flashRevealed;
+  if (card) card.classList.toggle('revealed', flashRevealed);
   const w = filteredWords[flashIndex];
   if (flashRevealed && w) speak(w.it);
-  renderFlash(document.getElementById('modeContent'));
 }
 
 function nextFlash() {
+  flashEnter = 'next';
   flashIndex = (flashIndex + 1) % filteredWords.length;
   flashRevealed = false;
   renderFlash(document.getElementById('modeContent'));
 }
 
 function prevFlash() {
+  flashEnter = 'prev';
   flashIndex = (flashIndex - 1 + filteredWords.length) % filteredWords.length;
   flashRevealed = false;
   renderFlash(document.getElementById('modeContent'));
@@ -910,4 +1013,65 @@ function initWelcome() {
 }
 
 initWelcome();
+
+// ==================== VERSION / IN-APP UPDATE ====================
+(function initVersion() {
+  const v = document.getElementById('appVersion');
+  if (v) v.textContent = window.APP_VERSION || '1.0.0';
+})();
+
+let __updateUrl = '';
+let __updateBuild = 0;
+
+function nativePlatform() {
+  return !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform());
+}
+
+function openExternal(url) {
+  try {
+    const cap = window.Capacitor;
+    const b = cap && ((cap.Plugins && cap.Plugins.Browser) || (cap.registerPlugin ? cap.registerPlugin('Browser') : null));
+    if (b && typeof b.open === 'function') {
+      b.open({ url: url });
+      return;
+    }
+  } catch (e) {}
+  try { window.open(url, '_blank', 'noopener'); } catch (e) { window.location.href = url; }
+}
+
+async function checkAppUpdate() {
+  if (!nativePlatform()) return;
+  try {
+    const res = await fetch('version.json', { cache: 'no-store' });
+    if (!res.ok) return;
+    const info = await res.json();
+    if (!info || !info.build || info.build <= (window.APP_BUILD || 0)) return;
+    if (localStorage.getItem('ncx_update_skip') === String(info.build)) return;
+    __updateUrl = info.apk || '';
+    __updateBuild = info.build;
+    const ver = document.getElementById('umVersion');
+    if (ver) ver.textContent = info.version || '';
+    const notes = document.getElementById('umNotes');
+    if (notes) notes.innerHTML = (info.notes || []).map(n => '<li>' + n + '</li>').join('');
+    const m = document.getElementById('updateModal');
+    if (m) m.classList.add('show');
+  } catch (e) {}
+}
+
+function downloadUpdate() {
+  if (!__updateUrl) return;
+  openExternal(__updateUrl);
+  showToast('📥 بدأ تحميل التحديث…');
+  closeUpdate(true);
+}
+
+function closeUpdate(skip) {
+  const m = document.getElementById('updateModal');
+  if (m) m.classList.remove('show');
+  if (skip && __updateBuild) {
+    try { localStorage.setItem('ncx_update_skip', String(__updateBuild)); } catch (e) {}
+  }
+}
+
+setTimeout(checkAppUpdate, 3500);
 

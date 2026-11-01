@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
-<link rel="stylesheet" href="style.css?v=25">
+<link rel="stylesheet" href="style.css?v=26">
 </head>
 <body>
 
@@ -104,6 +104,7 @@
   <span class="ncx-badge">Ncx</span>
   <p>صُنع بـ <span class="heart">❤️</span> لمحبّي اللغة الإيطالية</p>
   <p>© 2026 Ncx — جميع الحقوق محفوظة</p>
+  <p class="footer-ver">الإصدار <span id="appVersion">—</span></p>
   <button class="footer-about" onclick="openWelcome()">عن التطبيق</button>
 </footer>
 
@@ -135,7 +136,7 @@
     <button class="wc-skip" onclick="closeWelcome()" aria-label="إغلاق">✕</button>
 
     <div class="wc-brand">
-      <img class="wc-brand-img" src="brand.webp?v=25" alt="Ncx" width="54" height="54">
+      <img class="wc-brand-img" src="brand.webp?v=26" alt="Ncx" width="54" height="54">
       <span class="wc-brand-name">Ncx</span>
     </div>
     <h2 class="wc-title" id="wcTitle">أهلاً بك في <span>IT Ncx</span></h2>
@@ -183,10 +184,29 @@
   </div>
 </div>
 
-<script src="audio_index.js?v=25"></script>
-<script src="data1.js?v=25"></script>
-<script src="data2.js?v=25"></script>
-<script src="app.js?v=25"></script>
+<!-- APP UPDATE (android) -->
+<div class="update-modal" id="updateModal" onclick="if(event.target===this)closeUpdate()">
+  <div class="um-box">
+    <div class="um-icon">⬆️</div>
+    <h3>تحديث جديد متوفر</h3>
+    <p class="um-sub">الإصدار <b id="umVersion">—</b> جاهز للتحميل</p>
+    <ul class="um-notes" id="umNotes"></ul>
+    <button class="um-btn" onclick="downloadUpdate()">تحميل التحديث</button>
+    <button class="um-later" onclick="closeUpdate(true)">لاحقاً</button>
+  </div>
+</div>
+
+<!-- SOUND WAVE -->
+<div class="sound-wave" id="soundWave" aria-hidden="true">
+  <i></i><i></i><i></i><i></i><i></i>
+  <span>جارٍ النطق…</span>
+</div>
+
+<script src="audio_index.js?v=26"></script>
+<script src="data1.js?v=26"></script>
+<script src="data2.js?v=26"></script>
+<script src="version.js?v=26"></script>
+<script src="app.js?v=26"></script>
 </body>
 </html>
 
