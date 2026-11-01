@@ -726,11 +726,21 @@ body.welcome-open{ overflow:hidden; }
 }
 .wc-skip:hover{ background:rgba(255,255,255,.12); color:#fff; }
 
-.wc-badge{
-  position:relative; display:inline-block; margin-bottom:14px;
-  padding:6px 16px; border-radius:999px; font-weight:800; font-size:.82rem; letter-spacing:.5px;
-  color:#fbbf24; background:rgba(251,191,36,.10);
-  border:1px solid rgba(251,191,36,.32);
+.wc-brand{
+  position:relative; display:inline-flex; align-items:center; gap:11px;
+  margin-bottom:12px;
+}
+.wc-brand-img{
+  width:54px; height:54px; border-radius:14px; object-fit:cover;
+  background:#070b14; border:2px solid rgba(251,191,36,.55);
+  box-shadow:0 8px 24px rgba(0,0,0,.55), 0 0 0 4px rgba(251,191,36,.07);
+}
+.wc-brand-name{
+  font-family:'Poppins',sans-serif; font-weight:800; font-size:1.7rem;
+  letter-spacing:1.5px; direction:ltr; line-height:1;
+  background:linear-gradient(100deg,#fde68a,#fbbf24 55%,#f59e0b);
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 2px 8px rgba(251,191,36,.25));
 }
 .wc-title{
   position:relative; margin:0 0 10px; font-size:2rem; line-height:1.35; font-weight:900;
@@ -751,15 +761,13 @@ body.welcome-open{ overflow:hidden; }
   border-radius:16px; background:rgba(255,255,255,.045);
   border:1px solid rgba(255,255,255,.08);
 }
-.wc-host-avatar{
-  flex:0 0 auto; width:46px; height:46px; border-radius:50%;
-  display:flex; align-items:center; justify-content:center;
-  font-weight:900; font-family:'Poppins',sans-serif; font-size:.95rem; color:#0b1220;
-  background:linear-gradient(135deg,#fbbf24,#f59e0b);
-  box-shadow:0 6px 18px rgba(251,191,36,.35);
+.wc-host-flag{
+  flex:0 0 auto; width:42px; height:42px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center; font-size:1.25rem;
+  background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12);
 }
 .wc-host-text{ display:flex; flex-direction:column; gap:3px; }
-.wc-host-text b{ font-size:1rem; color:#fff; }
+.wc-host-text b{ font-size:1rem; color:#ffd700; }
 .wc-host-text span{ font-size:.8rem; color:#93a3c0; }
 .wc-host-text em{ font-style:normal; font-weight:800; color:#fbbf24; }
 
@@ -809,11 +817,13 @@ body.welcome-open{ overflow:hidden; }
 @media (max-width:520px){
   .welcome-overlay{ padding:10px 10px calc(10px + env(safe-area-inset-bottom, 0px)); }
   .welcome-card{ padding:22px 16px 16px; border-radius:22px; }
-  .wc-badge{ margin-bottom:10px; padding:5px 14px; font-size:.78rem; }
+  .wc-brand{ margin-bottom:10px; gap:9px; }
+  .wc-brand-img{ width:46px; height:46px; border-radius:12px; }
+  .wc-brand-name{ font-size:1.42rem; }
   .wc-title{ font-size:1.45rem; margin-bottom:8px; }
   .wc-sub{ font-size:.84rem; line-height:1.7; margin-bottom:13px; }
   .wc-host{ padding:10px 12px; margin-bottom:12px; gap:10px; }
-  .wc-host-avatar{ width:42px; height:42px; font-size:.88rem; }
+  .wc-host-flag{ width:36px; height:36px; font-size:1.05rem; }
   .wc-host-text b{ font-size:.93rem; }
   .wc-host-text span{ font-size:.74rem; }
   .wc-stats{ gap:6px; margin-bottom:13px; }
@@ -835,11 +845,13 @@ body.welcome-open{ overflow:hidden; }
 @media (max-height:680px){
   .welcome-overlay{ padding-top:10px; padding-bottom:10px; }
   .welcome-card{ padding-top:20px; padding-bottom:12px; }
-  .wc-badge{ margin-bottom:8px; padding:4px 12px; font-size:.72rem; }
+  .wc-brand{ margin-bottom:8px; gap:8px; }
+  .wc-brand-img{ width:40px; height:40px; border-radius:10px; }
+  .wc-brand-name{ font-size:1.22rem; }
   .wc-title{ font-size:1.3rem; margin-bottom:6px; }
   .wc-sub{ font-size:.78rem; line-height:1.55; margin-bottom:10px; }
   .wc-host{ padding:8px 10px; margin-bottom:10px; }
-  .wc-host-avatar{ width:36px; height:36px; font-size:.8rem; }
+  .wc-host-flag{ width:32px; height:32px; font-size:.95rem; }
   .wc-host-text b{ font-size:.86rem; }
   .wc-host-text span{ font-size:.7rem; }
   .wc-stats{ margin-bottom:10px; }
