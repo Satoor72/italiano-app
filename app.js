@@ -876,3 +876,38 @@ window.addEventListener('appinstalled', () => {
   hideInstallBar();
 });
 showInstallBar();
+
+// ==================== WELCOME (first run on this device) ====================
+const WELCOME_KEY = 'ncx_welcome_seen_v1';
+
+function welcomeSeen() {
+  try { return localStorage.getItem(WELCOME_KEY) === '1'; } catch (e) { return true; }
+}
+
+function openWelcome() {
+  const o = document.getElementById('welcomeOverlay');
+  if (!o) return;
+  const w = document.getElementById('wcWords');
+  const s = document.getElementById('wcSections');
+  const a = document.getElementById('wcAudio');
+  try { if (w) w.textContent = totalWords().toLocaleString('en-US'); } catch (e) {}
+  try { if (s) s.textContent = ALL_DATA.length; } catch (e) {}
+  try { if (a && window.AUDIO_INDEX) a.textContent = Object.keys(window.AUDIO_INDEX).length.toLocaleString('en-US'); } catch (e) {}
+  o.classList.add('show');
+  document.body.classList.add('welcome-open');
+}
+
+function closeWelcome() {
+  const o = document.getElementById('welcomeOverlay');
+  if (o) o.classList.remove('show');
+  document.body.classList.remove('welcome-open');
+  try { localStorage.setItem(WELCOME_KEY, '1'); } catch (e) {}
+}
+
+function initWelcome() {
+  if (welcomeSeen()) return;
+  setTimeout(openWelcome, 400);
+}
+
+initWelcome();
+

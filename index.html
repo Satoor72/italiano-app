@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
-<link rel="stylesheet" href="style.css?v=23">
+<link rel="stylesheet" href="style.css?v=24">
 </head>
 <body>
 
@@ -104,6 +104,7 @@
   <span class="ncx-badge">Ncx</span>
   <p>صُنع بـ <span class="heart">❤️</span> لمحبّي اللغة الإيطالية</p>
   <p>© 2026 Ncx — جميع الحقوق محفوظة</p>
+  <button class="footer-about" onclick="openWelcome()">عن التطبيق</button>
 </footer>
 
 <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
@@ -127,6 +128,46 @@
   <button class="ib-close" onclick="dismissInstall()" aria-label="إغلاق">✕</button>
 </div>
 
+<!-- WELCOME (first run) -->
+<div class="welcome-overlay" id="welcomeOverlay" role="dialog" aria-modal="true" aria-labelledby="wcTitle">
+  <div class="welcome-card">
+    <div class="wc-flag"><i></i><i></i><i></i></div>
+    <button class="wc-skip" onclick="closeWelcome()" aria-label="إغلاق">✕</button>
+
+    <div class="wc-badge">🇮🇹 IT&nbsp;Ncx</div>
+    <h2 class="wc-title" id="wcTitle">أهلاً بك في <span>IT Ncx</span></h2>
+    <p class="wc-sub">رحلتك لتعلّم اللغة الإيطالية تبدأ من هنا — كلمات وجمل بنطق بشري، واختبارات، وتحدّي صوتي.</p>
+
+    <div class="wc-host">
+      <div class="wc-host-avatar">HH</div>
+      <div class="wc-host-text">
+        <b>Prof. Hamel Hamida</b>
+        <span>إعداد وتقديم · by <em>Ncx</em></span>
+      </div>
+    </div>
+
+    <div class="wc-stats">
+      <div><b id="wcWords">—</b><span>كلمة وجملة</span></div>
+      <div><b id="wcSections">—</b><span>قسم تعليمي</span></div>
+      <div><b id="wcAudio">—</b><span>ملف صوتي</span></div>
+    </div>
+
+    <ul class="wc-features">
+      <li><span>🔊</span> نطق بشري أصلي لكل كلمة</li>
+      <li><span>🎙️</span> تحدّي الصوت: اسمع، أعد، واحصل على نسبتك</li>
+      <li><span>🧪</span> اختبارات وأوضاع متعددة للحفظ</li>
+      <li><span>📲</span> يعمل بدون إنترنت بعد التثبيت</li>
+    </ul>
+
+    <button class="wc-cta" onclick="closeWelcome()">ابدأ التعلّم الآن</button>
+    <a class="wc-ig" href="https://www.instagram.com/vncxcnv/" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5.5"></rect><circle cx="12" cy="12" r="4.3"></circle><circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none"></circle></svg>
+      تابعني على إنستقرام · @vncxcnv
+    </a>
+    <p class="wc-note">تظهر هذه الرسالة مرة واحدة فقط على هذا الجهاز</p>
+  </div>
+</div>
+
 <div class="install-modal" id="installModal" onclick="if(event.target===this)closeInstallModal()">
   <div class="im-box">
     <h3>📲 تثبيت على الآيفون</h3>
@@ -139,10 +180,10 @@
   </div>
 </div>
 
-<script src="audio_index.js?v=23"></script>
-<script src="data1.js?v=23"></script>
-<script src="data2.js?v=23"></script>
-<script src="app.js?v=23"></script>
+<script src="audio_index.js?v=24"></script>
+<script src="data1.js?v=24"></script>
+<script src="data2.js?v=24"></script>
+<script src="app.js?v=24"></script>
 </body>
 </html>
 
