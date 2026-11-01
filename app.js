@@ -1042,7 +1042,7 @@ function openExternal(url) {
 async function checkAppUpdate() {
   if (!nativePlatform()) return;
   try {
-    const res = await fetch('version.json', { cache: 'no-store' });
+    const res = await fetch('https://satoor72.github.io/italiano-app/version.json?t=' + Date.now(), { cache: 'no-store' });
     if (!res.ok) return;
     const info = await res.json();
     if (!info || !info.build || info.build <= (window.APP_BUILD || 0)) return;
